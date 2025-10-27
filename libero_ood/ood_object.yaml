@@ -3,7 +3,6 @@ libero_goal:
     wooden_cabinet:
       - yellow_cabinet
       - white_cabinet
-      - short_cabinet
   put_the_cream_cheese_in_the_bowl:
     akita_black_bowl:
       - black_bowl
@@ -23,7 +22,6 @@ libero_goal:
       - white_bowl
       - yellow_bowl
     wooden_cabinet:
-      - short_cabinet
       - yellow_cabinet
       - white_cabinet
   put_the_wine_bottle_on_the_rack:
@@ -38,10 +36,9 @@ libero_goal:
   put_the_wine_bottle_on_top_of_the_cabinet:
     wine_bottle:
       - white_bottle
-    wooden_cabinet:
+    :
       - yellow_cabinet
       - white_cabinet
-      - short_cabinet
   put_the_bowl_on_the_plate:
     akita_black_bowl:
       - black_bowl
@@ -74,7 +71,6 @@ libero_goal:
       - white_bowl
       - yellow_bowl
     wooden_cabinet:
-      - short_cabinet
       - yellow_cabinet
       - white_cabinet
 
@@ -255,4 +251,5 @@ libero_object:
     tomato_sauce:
       - yellow_tomato_sauce
     basket:
+
       - red_basket
