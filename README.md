@@ -117,7 +117,7 @@ python benchmark_scripts/download_libero_datasets.py --datasets DATASET --use-hu
 
 The datasets hosted on HuggingFace are available at [here](https://huggingface.co/datasets/yifengzhu-hf/LIBERO-datasets).
 
-## LIBERO-PRO Evaluation
+# LIBERO-PRO Evaluation
 
 To specify single-type or combined-type generalization evaluation, you only need to modify the `evaluation_config.yaml` configuration file in the project directory. The core configuration parameters and their functions are as follows:
 
@@ -200,6 +200,51 @@ def eval_libero(cfg: GenerateConfig) -> float:
 
 # Note!!!
 For unknown reasons, in some cases replacing the environment will cause the objects on the table to move randomly. After many tests, replacing the environment with 'main_table' works and we are actively in contact with the authors of LIBERO to fix this issue.
+
+
+# Initial position perturbation
+
+This guide will help you quickly run the "Object Position perturbation Experiment Evaluation" and reproduce the results of "Figure 6" in the paper.
+
+---
+
+## 🚀 Quick Start
+
+### 1️⃣ Prepare the BDDL file
+
+1. Go to: `libero/libero/bddl_files/`
+2. Create the folder: `libero_object_temp`
+3. Copy the target perturbation file into it, for example: `libero/libero/bddl_files/libero_object_temp_x0.1`
+4. Copy all '.bddl' files to: `libero/libero/bddl_files/libero_object_temp/`
+
+### 2️⃣ Prepare the Init file
+
+1. Go to: `libero/libero/init_files/`
+2. Create the folder: `libero_object_temp`
+3. Copy in the initialization file for the target perturbation, for example: `libero/libero/init_files/libero_object_temp_x0.1`
+4. Copy all its '.init' files to: `libero/libero/init_files/libero_object_temp/`
+
+### 3️⃣ Optional disturbance range
+
+You can adjust the perturbation intensity according to your experimental needs:
+| Perturbation Axis       | Available Levels                       | Description                         |
+| ----------------------- | -------------------------------------- | ----------------------------------- |
+| **X-axis Perturbation** | `x0.1`, `x0.2`, `x0.3`, `x0.4`, `x0.5` | Object translation along the X-axis |
+| **Y-axis Perturbation** | `y0.1`, `y0.2`, `y0.3`, `y0.4`, `y0.5` | Object translation along the Y-axis |
+
+
+For example:
+```bash
+libero_object_temp_x0.3
+libero_object_temp_y0.4
+```
+
+## 4️⃣ Evaluation of running experiments
+Using OpenVLA as an example, you can evaluate it directly by running the following command:
+```
+python run_libero_eval.py
+```
+The script will automatically load disturbances in the `libero_object_temp` folder.
 
 # Citation
 If you use LIBERO-PRO in your research, please cite both the original LIBERO benchmark (as LIBERO-PRO is fully built upon it) and the LIBERO-PRO paper:
