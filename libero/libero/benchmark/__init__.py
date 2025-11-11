@@ -117,6 +117,9 @@ libero_suites = [
 "libero_spatial_temp",
 "libero_10_temp",
 "libero_object_temp",
+"libero_goal_task",
+"libero_goal_env",
+"libero_goal_swap",
 ]
 task_maps = {}
 max_len = 0
@@ -250,7 +253,7 @@ class Benchmark(abc.ABC):
             self.tasks[i].problem_folder,
             self.tasks[i].init_states_file,
         )
-        init_states = torch.load(init_states_path)
+        init_states = torch.load(init_states_path, weights_only=False)
         return init_states
 
     def set_task_embs(self, task_embs):
@@ -716,4 +719,25 @@ class LIBERO_OBJECT_TEMP(Benchmark):
     def __init__(self, task_order_index=0):
         super().__init__(task_order_index=task_order_index)
         self.name = "libero_object_temp"
+        self._make_benchmark()
+
+@register_benchmark
+class LIBERO_GOAL_TASK(Benchmark):
+    def __init__(self, task_order_index=0):
+        super().__init__(task_order_index=task_order_index)
+        self.name = "libero_goal_task"
+        self._make_benchmark()
+
+@register_benchmark
+class LIBERO_GOAL_ENV(Benchmark):
+    def __init__(self, task_order_index=0):
+        super().__init__(task_order_index=task_order_index)
+        self.name = "libero_goal_env"
+        self._make_benchmark()
+
+@register_benchmark
+class LIBERO_GOAL_SWAP(Benchmark):
+    def __init__(self, task_order_index=0):
+        super().__init__(task_order_index=task_order_index)
+        self.name = "libero_goal_swap"
         self._make_benchmark()

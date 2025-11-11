@@ -727,6 +727,8 @@ class BaseVectorEnv(object):
             obs = np.stack(obs_list)
         except ValueError:  # different len(obs)
             obs = np.array(obs_list, dtype=object)
+        
+        obs = {k: np.array([d[k] for d in obs_list]) for k in obs_list[0]}
 
         if reset_returns_info:
             infos = [r[1] for r in ret_list]
@@ -825,7 +827,10 @@ class BaseVectorEnv(object):
             obs_stack = np.stack(obs_list)
         except ValueError:  # different len(obs)
             obs_stack = np.array(obs_list, dtype=object)
+
+        obs_stack = {k: np.array([d[k] for d in obs_list]) for k in obs_list[0]}
         other_stacks = map(np.stack, return_lists[1:])
+        
         return (obs_stack, *other_stacks)  # type: ignore
 
     def seed(

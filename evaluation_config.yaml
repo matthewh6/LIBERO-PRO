@@ -1,12 +1,12 @@
-bddl_files_path: "./LIBERO-PRO/libero/libero/bddl_files/"
-script_path: "./LIBERO-PRO/notebooks/generate_init_states.py"
-init_file_dir: "./LIBERO-PRO/libero/libero/init_files/"
+bddl_files_path: "./LIBERO_PRO/libero/libero/bddl_files/"
+script_path: "./LIBERO_PRO/notebooks/generate_init_states.py"
+init_file_dir: "./LIBERO_PRO/libero/libero/init_files/"
 
-use_environment: true
+use_environment: false
 use_swap: false
 use_object: false
 use_language: false
-use_task: false
+use_task: true
 
 ood_task_configs:
   environment: "./libero_ood/ood_environment.yaml"
