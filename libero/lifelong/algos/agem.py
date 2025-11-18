@@ -1,8 +1,6 @@
 import numpy as np
-import robomimic.utils.tensor_utils as TensorUtils
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 from libero.lifelong.algos.er import ER
 from libero.lifelong.utils import *
@@ -106,8 +104,6 @@ class AGEM(ER):
                 overwrite_grad(self.policy.parameters, self.grad_xy, self.grad_dims)
 
         if self.cfg.train.grad_clip is not None:
-            grad_norm = nn.utils.clip_grad_norm_(
-                self.policy.parameters(), self.cfg.train.grad_clip
-            )
+            grad_norm = nn.utils.clip_grad_norm_(self.policy.parameters(), self.cfg.train.grad_clip)
         self.optimizer.step()
         return loss.item()

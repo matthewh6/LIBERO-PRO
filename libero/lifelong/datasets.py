@@ -1,9 +1,7 @@
-import copy
 
 import numpy as np
 import robomimic.utils.file_utils as FileUtils
 import robomimic.utils.obs_utils as ObsUtils
-from PIL import Image
 from robomimic.utils.dataset import SequenceDataset
 from torch.utils.data import Dataset
 
@@ -23,13 +21,12 @@ def get_dataset(
     seq_len=1,
     frame_stack=1,
     filter_key=None,
-    hdf5_cache_mode="low_dim",
+    hdf5_cache_mode='low_dim',
     *args,
-    **kwargs
+    **kwargs,
 ):
-
     if initialize_obs_utils:
-        ObsUtils.initialize_obs_utils_with_obs_specs({"obs": obs_modality})
+        ObsUtils.initialize_obs_utils_with_obs_specs({'obs': obs_modality})
 
     all_obs_keys = []
     for modality_name, modality_list in obs_modality.items():
@@ -42,8 +39,8 @@ def get_dataset(
     filter_key = filter_key
     dataset = SequenceDataset(
         hdf5_path=dataset_path,
-        obs_keys=shape_meta["all_obs_keys"],
-        dataset_keys=["actions"],
+        obs_keys=shape_meta['all_obs_keys'],
+        dataset_keys=['actions'],
         load_next_obs=False,
         frame_stack=frame_stack,
         seq_length=seq_len,  # length-10 temporal sequences
@@ -71,7 +68,7 @@ class SequenceVLDataset(Dataset):
 
     def __getitem__(self, idx):
         return_dict = self.sequence_dataset.__getitem__(idx)
-        return_dict["task_emb"] = self.task_emb
+        return_dict['task_emb'] = self.task_emb
         return return_dict
 
 
@@ -81,9 +78,7 @@ class GroupedTaskDataset(Dataset):
         self.task_embs = task_embs
         self.group_size = len(sequence_datasets)
         self.n_demos = sum([x.n_demos for x in self.sequence_datasets])
-        self.total_num_sequences = sum(
-            [x.total_num_sequences for x in self.sequence_datasets]
-        )
+        self.total_num_sequences = sum([x.total_num_sequences for x in self.sequence_datasets])
         self.lengths = [len(x) for x in self.sequence_datasets]
         self.task_group_size = len(self.sequence_datasets)
 
@@ -123,7 +118,7 @@ class GroupedTaskDataset(Dataset):
     def __getitem__(self, idx):
         oi, oti = self.__get_original_task_idx(idx)
         return_dict = self.sequence_datasets[oti].__getitem__(oi)
-        return_dict["task_emb"] = self.task_embs[oti]
+        return_dict['task_emb'] = self.task_embs[oti]
         return return_dict
 
 

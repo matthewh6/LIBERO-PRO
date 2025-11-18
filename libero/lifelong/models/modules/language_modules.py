@@ -1,6 +1,7 @@
 """
 This file contains modules that encode language task embeddings.
 """
+
 import torch.nn as nn
 
 
@@ -17,7 +18,7 @@ class IdentityEncoder(nn.Module):
         data:
             task_emb: (B, E)
         """
-        h = data["task_emb"]  # (B, L, H)
+        h = data['task_emb']  # (B, L, H)
         return h
 
 
@@ -32,7 +33,7 @@ class MLPEncoder(nn.Module):
 
     def __init__(self, input_size, hidden_size, output_size, num_layers):
         super().__init__()
-        assert num_layers >= 1, "[error] num_layers < 1"
+        assert num_layers >= 1, '[error] num_layers < 1'
         sizes = [input_size] + [hidden_size] * (num_layers - 1) + [output_size]
         layers = []
         for i in range(num_layers - 1):
@@ -46,5 +47,5 @@ class MLPEncoder(nn.Module):
         data:
             task_emb: (B, E)
         """
-        h = self.projection(data["task_emb"])  # (B, H)
+        h = self.projection(data['task_emb'])  # (B, H)
         return h

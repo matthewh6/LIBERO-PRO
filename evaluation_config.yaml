@@ -1,19 +1,19 @@
-bddl_files_path: "./LIBERO-PRO/libero/libero/bddl_files/"
-script_path: "./LIBERO-PRO/notebooks/generate_init_states.py"
-init_file_dir: "./LIBERO-PRO/libero/libero/init_files/"
+bddl_files_path: "/gscratch/weirdlab/hongmm/p-diff-exp/LIBERO_PRO/libero/libero/bddl_files/"
+script_path: "/gscratch/weirdlab/hongmm/p-diff-exp/LIBERO_PRO/notebooks/generate_init_states.py"
+init_file_dir: "/gscratch/weirdlab/hongmm/p-diff-exp/LIBERO_PRO/libero/libero/init_files/"
 
-use_environment: true
+use_environment: false
 use_swap: false
 use_object: false
 use_language: false
-use_task: false
+use_task: true
 
 ood_task_configs:
-  environment: "./libero_ood/ood_environment.yaml"
-  swap: "./libero_ood/ood_spatial_relation.yaml"
-  object: "./libero_ood/ood_object.yaml"
-  language: "./libero_ood/ood_language.yaml"
-  task: "./libero_ood/ood_task.yaml"
+  environment: "/gscratch/weirdlab/hongmm/p-diff-exp/LIBERO_PRO/libero_ood/ood_environment.yaml"
+  swap: "/gscratch/weirdlab/hongmm/p-diff-exp/LIBERO_PRO/libero_ood/ood_spatial_relation.yaml"
+  object: "/gscratch/weirdlab/hongmm/p-diff-exp/LIBERO_PRO/libero_ood/ood_object.yaml"
+  language: "/gscratch/weirdlab/hongmm/p-diff-exp/LIBERO_PRO/libero_ood/ood_language.yaml"
+  task: "/gscratch/weirdlab/hongmm/p-diff-exp/LIBERO_PRO/libero_ood/ood_task.yaml"
 
 perturbation_mapping:
   use_environment: env

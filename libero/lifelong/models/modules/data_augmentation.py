@@ -47,7 +47,7 @@ class TranslationAug(nn.Module):
         if self.training:
             batch_size, temporal_len, img_c, img_h, img_w = x.shape
             x = x.reshape(batch_size, temporal_len * img_c, img_h, img_w)
-            out = F.pad(x, pad=(self.pad_translation,) * 4, mode="replicate")
+            out = F.pad(x, pad=(self.pad_translation,) * 4, mode='replicate')
             out = self.crop_randomizer.forward_in(out)
             out = out.reshape(batch_size, temporal_len, img_c, img_h, img_w)
         else:

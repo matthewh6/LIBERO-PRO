@@ -12,12 +12,10 @@ class OnTheGroundPanda(ManipulatorModel):
     """
 
     def __init__(self, idn=0):
-        super().__init__(xml_path_completion("robots/panda/robot.xml"), idn=idn)
+        super().__init__(xml_path_completion('robots/panda/robot.xml'), idn=idn)
 
         # Set joint damping
-        self.set_joint_attribute(
-            attrib="damping", values=np.array((0.1, 0.1, 0.1, 0.1, 0.1, 0.01, 0.01))
-        )
+        self.set_joint_attribute(attrib='damping', values=np.array((0.1, 0.1, 0.1, 0.1, 0.1, 0.01, 0.01)))
 
     @property
     def default_mount(self):
@@ -25,26 +23,24 @@ class OnTheGroundPanda(ManipulatorModel):
 
     @property
     def default_gripper(self):
-        return "PandaGripper"
+        return 'PandaGripper'
 
     @property
     def default_controller_config(self):
-        return "default_panda"
+        return 'default_panda'
 
     @property
     def init_qpos(self):
-        return np.array(
-            [0, -1.61037389e-01, 0.00, -2.44459747e00, 0.00, 2.22675220e00, np.pi / 4]
-        )
+        return np.array([0, -1.61037389e-01, 0.00, -2.44459747e00, 0.00, 2.22675220e00, np.pi / 4])
 
     @property
     def base_xpos_offset(self):
         return {
-            "bins": (-0.5, -0.1, 0),
-            "empty": (-0.6, 0, 0),
-            "table": lambda table_length: (-0.16 - table_length / 2, 0, 0),
-            "coffee_table": lambda table_length: (-0.16 - table_length / 2, 0, 0.41),
-            "living_room_table": lambda table_length: (
+            'bins': (-0.5, -0.1, 0),
+            'empty': (-0.6, 0, 0),
+            'table': lambda table_length: (-0.16 - table_length / 2, 0, 0),
+            'coffee_table': lambda table_length: (-0.16 - table_length / 2, 0, 0.41),
+            'living_room_table': lambda table_length: (
                 -0.16 - table_length / 2,
                 0,
                 0.42,
@@ -61,4 +57,4 @@ class OnTheGroundPanda(ManipulatorModel):
 
     @property
     def arm_type(self):
-        return "single"
+        return 'single'

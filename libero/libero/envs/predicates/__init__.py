@@ -2,19 +2,19 @@ from .base_predicates import *
 
 
 VALIDATE_PREDICATE_FN_DICT = {
-    "true": TruePredicateFn(),
-    "false": FalsePredicateFn(),
-    "in": In(),
+    'true': TruePredicateFn(),
+    'false': FalsePredicateFn(),
+    'in': In(),
     # "incontact": InContactPredicateFn(),
-    "on": On(),
-    "up": Up(),
+    'on': On(),
+    'up': Up(),
     # "stack":     Stack(),
     # "temporal":  TemporalPredicate(),
-    "printjointstate": PrintJointState(),
-    "open": Open(),
-    "close": Close(),
-    "turnon": TurnOn(),
-    "turnoff": TurnOff(),
+    'printjointstate': PrintJointState(),
+    'open': Open(),
+    'close': Close(),
+    'turnon': TurnOn(),
+    'turnoff': TurnOff(),
 }
 
 

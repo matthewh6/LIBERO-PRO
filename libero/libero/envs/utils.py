@@ -1,11 +1,10 @@
-import collections
 import numpy as np
 import os
 import robosuite
 import xml.etree.ElementTree as ET
 
 from copy import copy
-from robosuite.utils.mjcf_utils import find_elements, xml_path_completion
+from robosuite.utils.mjcf_utils import find_elements
 from robosuite.utils.placement_samplers import ObjectPositionSampler
 
 
@@ -40,7 +39,7 @@ class MultiRegionRandomSampler(ObjectPositionSampler):
         x_ranges=[(0, 0)],
         y_ranges=[(0, 0)],
         rotation=None,
-        rotation_axis="z",
+        rotation_axis='z',
         ensure_object_boundary_in_range=True,
         ensure_valid_placement=True,
         reference_pos=(0, 0, 0),
@@ -103,10 +102,8 @@ class MultiRegionRandomSampler(ObjectPositionSampler):
         if self.rotation is None:
             rot_angle = np.random.uniform(high=2 * np.pi, low=0)
         elif isinstance(self.rotation, (tuple, list)):
-        # elif isinstance(self.rotation, collections.Iterable):
-            rot_angle = np.random.uniform(
-                high=max(self.rotation), low=min(self.rotation)
-            )
+            # elif isinstance(self.rotation, collections.Iterable):
+            rot_angle = np.random.uniform(high=max(self.rotation), low=min(self.rotation))
         # # 支持多轴旋转字典 - 添加对字典形式旋转的支持
         # elif isinstance(self.rotation, dict):
         #     from robosuite.utils.transform_utils import quat_multiply
@@ -140,18 +137,16 @@ class MultiRegionRandomSampler(ObjectPositionSampler):
             rot_angle = self.rotation
 
         # Return angle based on axis requested
-        if self.rotation_axis == "x":
+        if self.rotation_axis == 'x':
             return np.array([np.cos(rot_angle / 2), np.sin(rot_angle / 2), 0, 0])
-        elif self.rotation_axis == "y":
+        elif self.rotation_axis == 'y':
             return np.array([np.cos(rot_angle / 2), 0, np.sin(rot_angle / 2), 0])
-        elif self.rotation_axis == "z":
+        elif self.rotation_axis == 'z':
             return np.array([np.cos(rot_angle / 2), 0, 0, np.sin(rot_angle / 2)])
         else:
             # Invalid axis specified, raise error
             raise ValueError(
-                "Invalid rotation axis specified. Must be 'x', 'y', or 'z'. Got: {}".format(
-                    self.rotation_axis
-                )
+                "Invalid rotation axis specified. Must be 'x', 'y', or 'z'. Got: {}".format(self.rotation_axis)
             )
 
     def sample(self, fixtures=None, reference=None, on_top=True):
@@ -179,10 +174,10 @@ class MultiRegionRandomSampler(ObjectPositionSampler):
         if reference is None:
             base_offset = self.reference_pos
         elif type(reference) is str:
-            assert (
-                reference in placed_objects
-            ), "Invalid reference received. Current options are: {}, requested: {}".format(
-                placed_objects.keys(), reference
+            assert reference in placed_objects, (
+                'Invalid reference received. Current options are: {}, requested: {}'.format(
+                    placed_objects.keys(), reference
+                )
             )
             ref_pos, _, ref_obj = placed_objects[reference]
             base_offset = np.array(ref_pos)
@@ -190,18 +185,14 @@ class MultiRegionRandomSampler(ObjectPositionSampler):
                 base_offset += np.array((0, 0, ref_obj.top_offset[-1]))
         else:
             base_offset = np.array(reference)
-            assert (
-                base_offset.shape[0] == 3
-            ), "Invalid reference received. Should be (x,y,z) 3-tuple, but got: {}".format(
-                base_offset
+            assert base_offset.shape[0] == 3, (
+                'Invalid reference received. Should be (x,y,z) 3-tuple, but got: {}'.format(base_offset)
             )
 
         # Sample pos and quat for all objects assigned to this sampler
         for obj in self.mujoco_objects:
             # First make sure the currently sampled object hasn't already been sampled
-            assert (
-                obj.name not in placed_objects
-            ), "Object '{}' has already been sampled!".format(obj.name)
+            assert obj.name not in placed_objects, "Object '{}' has already been sampled!".format(obj.name)
 
             horizontal_radius = obj.horizontal_radius
             bottom_offset = obj.bottom_offset
@@ -221,9 +212,7 @@ class MultiRegionRandomSampler(ObjectPositionSampler):
                         if (
                             np.linalg.norm((object_x - x, object_y - y))
                             <= other_obj.horizontal_radius + horizontal_radius
-                        ) and (
-                            object_z - z <= other_obj.top_offset[-1] - bottom_offset[-1]
-                        ):
+                        ) and (object_z - z <= other_obj.top_offset[-1] - bottom_offset[-1]):
                             location_valid = False
                             break
 
@@ -232,7 +221,7 @@ class MultiRegionRandomSampler(ObjectPositionSampler):
                     quat = self._sample_quat()
 
                     # multiply this quat by the object's initial rotation if it has the attribute specified
-                    if hasattr(obj, "init_quat"):
+                    if hasattr(obj, 'init_quat'):
                         quat = quat_multiply(quat, obj.init_quat)
 
                     # location is valid, put the object down
@@ -243,7 +232,7 @@ class MultiRegionRandomSampler(ObjectPositionSampler):
                     break
 
             if not success:
-                raise RandomizationError("Cannot place all objects ):")
+                raise RandomizationError('Cannot place all objects ):')
         # print(placed_objects)
         return placed_objects
 
@@ -261,53 +250,49 @@ def postprocess_model_xml(xml_str, cameras_dict={}, demo_generation=False):
     """
 
     path = os.path.split(robosuite.__file__)[0]
-    path_split = path.split("/")
+    path_split = path.split('/')
 
     # replace mesh and texture file paths
     tree = ET.fromstring(xml_str)
     root = tree
-    asset = root.find("asset")
-    meshes = asset.findall("mesh")
-    textures = asset.findall("texture")
+    asset = root.find('asset')
+    meshes = asset.findall('mesh')
+    textures = asset.findall('texture')
     all_elements = meshes + textures
 
     # also replace paths for libero
-    libero_path = os.getcwd() + "/libero"
-    libero_path_split = libero_path.split("/")
+    libero_path = os.getcwd() + '/libero'
+    libero_path_split = libero_path.split('/')
 
     for elem in all_elements:
-        old_path = elem.get("file")
+        old_path = elem.get('file')
         if old_path is None:
             continue
-        old_path_split = old_path.split("/")
-        if "robosuite" in old_path_split:
-            ind = max(
-                loc for loc, val in enumerate(old_path_split) if val == "robosuite"
-            )  # last occurrence index
+        old_path_split = old_path.split('/')
+        if 'robosuite' in old_path_split:
+            ind = max(loc for loc, val in enumerate(old_path_split) if val == 'robosuite')  # last occurrence index
             new_path_split = path_split + old_path_split[ind + 1 :]
-            new_path = "/".join(new_path_split)
-            elem.set("file", new_path)
-        elif "libero" in old_path_split and demo_generation:
-            ind = max(
-                loc for loc, val in enumerate(old_path_split) if val == "libero"
-            )  # last occurrence index
+            new_path = '/'.join(new_path_split)
+            elem.set('file', new_path)
+        elif 'libero' in old_path_split and demo_generation:
+            ind = max(loc for loc, val in enumerate(old_path_split) if val == 'libero')  # last occurrence index
             new_path_split = libero_path_split + old_path_split[ind + 1 :]
-            new_path = "/".join(new_path_split)
-            elem.set("file", new_path)
+            new_path = '/'.join(new_path_split)
+            elem.set('file', new_path)
         else:
             continue
 
     # cameras = root.find("worldbody").findall("camera")
-    cameras = find_elements(root=tree, tags="camera", return_first=False)
+    cameras = find_elements(root=tree, tags='camera', return_first=False)
     for camera in cameras:
-        camera_name = camera.get("name")
+        camera_name = camera.get('name')
         if camera_name in cameras_dict:
-            camera.set("name", camera_name)
-            camera.set("pos", cameras_dict[camera_name]["pos"])
-            camera.set("quat", cameras_dict[camera_name]["quat"])
-            camera.set("mode", "fixed")
+            camera.set('name', camera_name)
+            camera.set('pos', cameras_dict[camera_name]['pos'])
+            camera.set('quat', cameras_dict[camera_name]['quat'])
+            camera.set('mode', 'fixed')
 
-    return ET.tostring(root, encoding="utf8").decode("utf8")
+    return ET.tostring(root, encoding='utf8').decode('utf8')
 
 
 def rectangle2xyrange(rect_ranges):

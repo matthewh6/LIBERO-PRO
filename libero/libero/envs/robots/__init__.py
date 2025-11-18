@@ -6,7 +6,7 @@ from robosuite.robots import ROBOT_CLASS_MAPPING
 
 ROBOT_CLASS_MAPPING.update(
     {
-        "MountedPanda": SingleArm,
-        "OnTheGroundPanda": SingleArm,
+        'MountedPanda': SingleArm,
+        'OnTheGroundPanda': SingleArm,
     }
 )

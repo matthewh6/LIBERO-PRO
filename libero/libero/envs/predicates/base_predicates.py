@@ -1,4 +1,3 @@
-from typing import List
 
 
 class Expression:
@@ -78,7 +77,7 @@ class On(BinaryAtomic):
 
 class Up(BinaryAtomic):
     def __call__(self, arg1):
-        return arg1.get_geom_state()["pos"][2] >= 1.0
+        return arg1.get_geom_state()['pos'][2] >= 1.0
 
 
 class Stack(BinaryAtomic):
@@ -86,7 +85,7 @@ class Stack(BinaryAtomic):
         return (
             arg1.check_contact(arg2)
             and arg2.check_contain(arg1)
-            and arg1.get_geom_state()["pos"][2] > arg2.get_geom_state()["pos"][2]
+            and arg1.get_geom_state()['pos'][2] > arg2.get_geom_state()['pos'][2]
         )
 
 

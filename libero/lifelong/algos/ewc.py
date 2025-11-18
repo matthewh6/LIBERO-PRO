@@ -1,8 +1,6 @@
-import numpy as np
 import robomimic.utils.tensor_utils as TensorUtils
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from torch.utils.data import DataLoader
 
 from libero.lifelong.algos.base import Sequential
@@ -25,9 +23,7 @@ class EWC(Sequential):
     def get_grads(self):
         return torch.cat(
             [
-                p.grad.reshape(-1)
-                if p.grad is not None
-                else torch.zeros_like(p).reshape(-1)
+                p.grad.reshape(-1) if p.grad is not None else torch.zeros_like(p).reshape(-1)
                 for p in self.policy.parameters()
             ]
         )
@@ -51,11 +47,9 @@ class EWC(Sequential):
         )
 
         for data in dataloader:
-            data = TensorUtils.map_tensor(
-                data, lambda x: safe_device(x, device=self.cfg.device)
-            )
+            data = TensorUtils.map_tensor(data, lambda x: safe_device(x, device=self.cfg.device))
             self.policy.zero_grad()
-            nll = self.policy.compute_loss(data, reduction="none")
+            nll = self.policy.compute_loss(data, reduction='none')
             (-nll).mean().backward()
             grads = self.get_grads()
             fish += grads**2
@@ -80,8 +74,6 @@ class EWC(Sequential):
         assert not torch.isnan(loss)
         (loss * self.loss_scale).backward()
         if self.cfg.train.grad_clip is not None:
-            grad_norm = nn.utils.clip_grad_norm_(
-                self.policy.parameters(), self.cfg.train.grad_clip
-            )
+            grad_norm = nn.utils.clip_grad_norm_(self.policy.parameters(), self.cfg.train.grad_clip)
         self.optimizer.step()
         return forward_loss

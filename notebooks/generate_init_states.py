@@ -39,22 +39,22 @@ def generate_init_states(
     os.makedirs(output_dir, exist_ok=True)
 
     # 获取所有 .bddl 文件
-    bddl_files = list(bddl_base_dir.glob("*.bddl"))
-    print(f"找到 {len(bddl_files)} 个 BDDL 文件")
+    bddl_files = list(bddl_base_dir.glob('*.bddl'))
+    print(f'找到 {len(bddl_files)} 个 BDDL 文件')
 
-    for bddl_file in tqdm(bddl_files, desc="处理 BDDL 文件"):
+    for bddl_file in tqdm(bddl_files, desc='处理 BDDL 文件'):
         task_base_name = bddl_file.stem
-        print(f"\n开始处理任务: {task_base_name}")
+        print(f'\n开始处理任务: {task_base_name}')
 
         all_initial_states = []
 
-        for i in tqdm(range(num_inits), desc=f"生成 {task_base_name} 的初始状态"):
+        for i in tqdm(range(num_inits), desc=f'生成 {task_base_name} 的初始状态'):
             env = None
             try:
                 env_args = {
-                    "bddl_file_name": str(bddl_file),
-                    "camera_heights": height,
-                    "camera_widths": width,
+                    'bddl_file_name': str(bddl_file),
+                    'camera_heights': height,
+                    'camera_widths': width,
                 }
                 env = OffScreenRenderEnv(**env_args)
 
@@ -62,41 +62,41 @@ def generate_init_states(
                 all_initial_states.append(initial_state)
 
             except Exception as e:
-                print(f"  生成第 {i+1} 个状态时出错: {e}")
+                print(f'  生成第 {i + 1} 个状态时出错: {e}')
 
             finally:
                 if env is not None and hasattr(env, 'close'):
                     env.close()
 
-        output_filename = f"{task_base_name}.pruned_init"
+        output_filename = f'{task_base_name}.pruned_init'
         output_filepath = output_dir / output_filename
 
         try:
             with zipfile.ZipFile(output_filepath, 'w', zipfile.ZIP_DEFLATED) as zipf:
                 all_initial_states = np.array(all_initial_states)
                 pickled_states_list = pickle.dumps(all_initial_states)
-                zipf.writestr("archive/data.pkl", pickled_states_list)
-                zipf.writestr("archive/version", b"1")
+                zipf.writestr('archive/data.pkl', pickled_states_list)
+                zipf.writestr('archive/version', b'1')
 
-            print(f"成功保存 {len(all_initial_states)} 个状态到: {output_filepath}")
+            print(f'成功保存 {len(all_initial_states)} 个状态到: {output_filepath}')
 
         except Exception as e:
-            print(f"保存状态列表时出错: {e}")
+            print(f'保存状态列表时出错: {e}')
 
-    print("\n所有任务处理完成！")
+    print('\n所有任务处理完成！')
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Generate init states for LIBERO BDDL tasks.")
-    parser.add_argument("--bddl_base_dir", type=str, required=True, help="Directory containing BDDL files.")
-    parser.add_argument("--output_dir", type=str, required=True, help="Directory to save .pruned_init files.")
-    parser.add_argument("--num_inits", type=int, default=50, help="Number of init states to generate per task.")
-    parser.add_argument("--height", type=int, default=128, help="Camera height.")
-    parser.add_argument("--width", type=int, default=128, help="Camera width.")
+    parser = argparse.ArgumentParser(description='Generate init states for LIBERO BDDL tasks.')
+    parser.add_argument('--bddl_base_dir', type=str, required=True, help='Directory containing BDDL files.')
+    parser.add_argument('--output_dir', type=str, required=True, help='Directory to save .pruned_init files.')
+    parser.add_argument('--num_inits', type=int, default=50, help='Number of init states to generate per task.')
+    parser.add_argument('--height', type=int, default=128, help='Camera height.')
+    parser.add_argument('--width', type=int, default=128, help='Camera width.')
     return parser.parse_args()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     args = parse_args()
     generate_init_states(
         bddl_base_dir=args.bddl_base_dir,

@@ -1,10 +1,7 @@
 import collections
 
-import numpy as np
-import robomimic.utils.tensor_utils as TensorUtils
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from torch.utils.data import ConcatDataset, RandomSampler
 
 from libero.lifelong.algos.base import Sequential
@@ -49,10 +46,7 @@ class ER(Sequential):
         super().start_task(task)
         if self.current_task > 0:
             # WARNING: currently we have a fixed size memory for each task.
-            buffers = [
-                TruncatedSequenceDataset(dataset, self.cfg.lifelong.n_memories)
-                for dataset in self.datasets
-            ]
+            buffers = [TruncatedSequenceDataset(dataset, self.cfg.lifelong.n_memories) for dataset in self.datasets]
 
             buf = ConcatDataset(buffers)
             self.buffer = cycle(
@@ -79,8 +73,6 @@ class ER(Sequential):
         loss = self.policy.compute_loss(data)
         (self.loss_scale * loss).backward()
         if self.cfg.train.grad_clip is not None:
-            grad_norm = nn.utils.clip_grad_norm_(
-                self.policy.parameters(), self.cfg.train.grad_clip
-            )
+            grad_norm = nn.utils.clip_grad_norm_(self.policy.parameters(), self.cfg.train.grad_clip)
         self.optimizer.step()
         return loss.item()

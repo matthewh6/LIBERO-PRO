@@ -42,12 +42,10 @@ class ExtraModalityTokens(nn.Module):
         self.num_extra = int(use_joint) + int(use_gripper) + int(use_ee)
 
         extra_low_level_feature_dim = (
-            int(use_joint) * joint_states_dim
-            + int(use_gripper) * gripper_states_dim
-            + int(use_ee) * ee_dim
+            int(use_joint) * joint_states_dim + int(use_gripper) * gripper_states_dim + int(use_ee) * ee_dim
         )
 
-        assert extra_low_level_feature_dim > 0, "[error] no extra information"
+        assert extra_low_level_feature_dim > 0, '[error] no extra information'
 
         self.extra_encoders = {}
 
@@ -65,20 +63,17 @@ class ExtraModalityTokens(nn.Module):
                 layers = [nn.Linear(extra_low_level_feature_dim, extra_embedding_size)]
 
             self.proprio_mlp = nn.Sequential(*layers)
-            self.extra_encoders[modality_name] = {"encoder": self.proprio_mlp}
+            self.extra_encoders[modality_name] = {'encoder': self.proprio_mlp}
 
-        for (proprio_dim, use_modality, modality_name) in [
-            (joint_states_dim, self.use_joint, "joint_states"),
-            (gripper_states_dim, self.use_gripper, "gripper_states"),
-            (ee_dim, self.use_ee, "ee_states"),
+        for proprio_dim, use_modality, modality_name in [
+            (joint_states_dim, self.use_joint, 'joint_states'),
+            (gripper_states_dim, self.use_gripper, 'gripper_states'),
+            (ee_dim, self.use_ee, 'ee_states'),
         ]:
-
             if use_modality:
                 generate_proprio_mlp_fn(modality_name, proprio_dim)
 
-        self.encoders = nn.ModuleList(
-            [x["encoder"] for x in self.extra_encoders.values()]
-        )
+        self.encoders = nn.ModuleList([x['encoder'] for x in self.extra_encoders.values()])
 
     def forward(self, obs_dict):
         """
@@ -91,18 +86,13 @@ class ExtraModalityTokens(nn.Module):
         """
         tensor_list = []
 
-        for (use_modality, modality_name) in [
-            (self.use_joint, "joint_states"),
-            (self.use_gripper, "gripper_states"),
-            (self.use_ee, "ee_states"),
+        for use_modality, modality_name in [
+            (self.use_joint, 'joint_states'),
+            (self.use_gripper, 'gripper_states'),
+            (self.use_ee, 'ee_states'),
         ]:
-
             if use_modality:
-                tensor_list.append(
-                    self.extra_encoders[modality_name]["encoder"](
-                        obs_dict[modality_name]
-                    )
-                )
+                tensor_list.append(self.extra_encoders[modality_name]['encoder'](obs_dict[modality_name]))
 
         x = torch.stack(tensor_list, dim=-2)
         return x
@@ -114,8 +104,7 @@ class PerturbationAttention:
     for understanding a control agent.
     """
 
-    def __init__(self, model, image_size=[128, 128], patch_size=[16, 16], device="cpu"):
-
+    def __init__(self, model, image_size=[128, 128], patch_size=[16, 16], device='cpu'):
         self.model = model
         self.patch_size = patch_size
         H, W = image_size
@@ -124,20 +113,16 @@ class PerturbationAttention:
         h, w = patch_size
         nh, nw = H // h, W // w
         mask = (
-            torch.eye(num_patches)
-            .view(num_patches, num_patches, 1, 1)
-            .repeat(1, 1, patch_size[0], patch_size[1])
+            torch.eye(num_patches).view(num_patches, num_patches, 1, 1).repeat(1, 1, patch_size[0], patch_size[1])
         )  # (np, np, h, w)
-        mask = rearrange(
-            mask.view(num_patches, nh, nw, h, w), "a b c d e -> a (b d) (c e)"
-        )  # (np, H, W)
+        mask = rearrange(mask.view(num_patches, nh, nw, h, w), 'a b c d e -> a (b d) (c e)')  # (np, H, W)
         self.mask = mask.to(device).view(1, num_patches, 1, H, W)
         self.num_patches = num_patches
         self.H, self.W = H, W
         self.nh, self.nw = nh, nw
 
     def __call__(self, data):
-        rgb = data["obs"]["agentview_rgb"]  # (B, C, H, W)
+        rgb = data['obs']['agentview_rgb']  # (B, C, H, W)
         B, C, H, W = rgb.shape
 
         rgb_ = rgb.unsqueeze(1).repeat(1, self.num_patches, 1, 1, 1)  # (B, np, C, H, W)
@@ -145,19 +130,14 @@ class PerturbationAttention:
         rgb_new = (rgb_mean * self.mask) + (1 - self.mask) * rgb_  # (B, np, C, H, W)
         rgb_stack = torch.cat([rgb.unsqueeze(1), rgb_new], 1)  # (B, 1+np, C, H, W)
 
-        rgb_stack = rearrange(rgb_stack, "b n c h w -> (b n) c h w")
+        rgb_stack = rearrange(rgb_stack, 'b n c h w -> (b n) c h w')
         res = self.model(rgb_stack).view(B, self.num_patches + 1, -1)  # (B, 1+np, E)
         base = res[:, 0].view(B, 1, -1)
         others = res[:, 1:].view(B, self.num_patches, -1)
 
         attn = F.softmax(1e5 * (others - base).pow(2).sum(-1), -1)  # (B, num_patches)
         attn_ = attn.view(B, 1, self.nh, self.nw)
-        attn_ = (
-            F.interpolate(attn_, size=(self.H, self.W), mode="bilinear")
-            .detach()
-            .cpu()
-            .numpy()
-        )
+        attn_ = F.interpolate(attn_, size=(self.H, self.W), mode='bilinear').detach().cpu().numpy()
         return attn_
 
 
@@ -182,28 +162,22 @@ class BCTransformerPolicy(BasePolicy):
         embed_size = policy_cfg.embed_size
         transformer_input_sizes = []
         self.image_encoders = {}
-        for name in shape_meta["all_shapes"].keys():
-            if "rgb" in name or "depth" in name:
+        for name in shape_meta['all_shapes'].keys():
+            if 'rgb' in name or 'depth' in name:
                 kwargs = policy_cfg.image_encoder.network_kwargs
-                kwargs.input_shape = shape_meta["all_shapes"][name]
+                kwargs.input_shape = shape_meta['all_shapes'][name]
                 kwargs.output_size = embed_size
-                kwargs.language_dim = (
-                    policy_cfg.language_encoder.network_kwargs.input_size
-                )
+                kwargs.language_dim = policy_cfg.language_encoder.network_kwargs.input_size
                 self.image_encoders[name] = {
-                    "input_shape": shape_meta["all_shapes"][name],
-                    "encoder": eval(policy_cfg.image_encoder.network)(**kwargs),
+                    'input_shape': shape_meta['all_shapes'][name],
+                    'encoder': eval(policy_cfg.image_encoder.network)(**kwargs),
                 }
 
-        self.encoders = nn.ModuleList(
-            [x["encoder"] for x in self.image_encoders.values()]
-        )
+        self.encoders = nn.ModuleList([x['encoder'] for x in self.image_encoders.values()])
 
         ### 2. encode language
         policy_cfg.language_encoder.network_kwargs.output_size = embed_size
-        self.language_encoder = eval(policy_cfg.language_encoder.network)(
-            **policy_cfg.language_encoder.network_kwargs
-        )
+        self.language_encoder = eval(policy_cfg.language_encoder.network)(**policy_cfg.language_encoder.network_kwargs)
 
         ### 3. encode extra information (e.g. gripper, joint_state)
         self.extra_encoder = ExtraModalityTokens(
@@ -217,9 +191,9 @@ class BCTransformerPolicy(BasePolicy):
 
         ### 4. define temporal transformer
         policy_cfg.temporal_position_encoding.network_kwargs.input_size = embed_size
-        self.temporal_position_encoding_fn = eval(
-            policy_cfg.temporal_position_encoding.network
-        )(**policy_cfg.temporal_position_encoding.network_kwargs)
+        self.temporal_position_encoding_fn = eval(policy_cfg.temporal_position_encoding.network)(
+            **policy_cfg.temporal_position_encoding.network_kwargs
+        )
 
         self.temporal_transformer = TransformerDecoder(
             input_size=embed_size,
@@ -232,11 +206,10 @@ class BCTransformerPolicy(BasePolicy):
 
         policy_head_kwargs = policy_cfg.policy_head.network_kwargs
         policy_head_kwargs.input_size = embed_size
-        policy_head_kwargs.output_size = shape_meta["ac_dim"]
+        policy_head_kwargs.output_size = shape_meta['ac_dim']
 
         self.policy_head = eval(policy_cfg.policy_head.network)(
-            **policy_cfg.policy_head.loss_kwargs,
-            **policy_cfg.policy_head.network_kwargs
+            **policy_cfg.policy_head.loss_kwargs, **policy_cfg.policy_head.network_kwargs
         )
 
         self.latent_queue = []
@@ -255,26 +228,21 @@ class BCTransformerPolicy(BasePolicy):
 
     def spatial_encode(self, data):
         # 1. encode extra
-        extra = self.extra_encoder(data["obs"])  # (B, T, num_extra, E)
+        extra = self.extra_encoder(data['obs'])  # (B, T, num_extra, E)
 
         # 2. encode language, treat it as action token
         B, T = extra.shape[:2]
         text_encoded = self.language_encoder(data)  # (B, E)
-        text_encoded = text_encoded.view(B, 1, 1, -1).expand(
-            -1, T, -1, -1
-        )  # (B, T, 1, E)
+        text_encoded = text_encoded.view(B, 1, 1, -1).expand(-1, T, -1, -1)  # (B, T, 1, E)
         encoded = [text_encoded, extra]
 
         # 3. encode image
         for img_name in self.image_encoders.keys():
-            x = data["obs"][img_name]
+            x = data['obs'][img_name]
             B, T, C, H, W = x.shape
-            img_encoded = self.image_encoders[img_name]["encoder"](
+            img_encoded = self.image_encoders[img_name]['encoder'](
                 x.reshape(B * T, C, H, W),
-                langs=data["task_emb"]
-                .reshape(B, 1, -1)
-                .repeat(1, T, 1)
-                .reshape(B * T, -1),
+                langs=data['task_emb'].reshape(B, 1, -1).repeat(1, T, 1).reshape(B * T, -1),
             ).view(B, T, 1, -1)
             encoded.append(img_encoded)
         encoded = torch.cat(encoded, -2)  # (B, T, num_modalities, E)

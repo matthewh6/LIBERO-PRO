@@ -1,8 +1,4 @@
-import collections
 import numpy as np
-import os
-import robosuite
-import xml.etree.ElementTree as ET
 
 from copy import copy
 
@@ -34,11 +30,7 @@ class ObjectPropertySampler:
             self.mujoco_objects = []
         else:
             # Shallow copy the list so we don't modify the inputted list but still keep the object references
-            self.mujoco_objects = (
-                [mujoco_objects]
-                if isinstance(mujoco_objects, MujocoObject)
-                else copy(mujoco_objects)
-            )
+            self.mujoco_objects = [mujoco_objects] if isinstance(mujoco_objects, MujocoObject) else copy(mujoco_objects)
 
     def add_objects(self, mujoco_objects):
         """
@@ -46,15 +38,9 @@ class ObjectPropertySampler:
         Args:
             mujoco_objects (MujocoObject or list of MujocoObject): single model or list of MJCF object models
         """
-        mujoco_objects = (
-            [mujoco_objects]
-            if isinstance(mujoco_objects, MujocoObject)
-            else mujoco_objects
-        )
+        mujoco_objects = [mujoco_objects] if isinstance(mujoco_objects, MujocoObject) else mujoco_objects
         for obj in mujoco_objects:
-            assert (
-                obj not in self.mujoco_objects
-            ), "Object '{}' already in sampler!".format(obj.name)
+            assert obj not in self.mujoco_objects, "Object '{}' already in sampler!".format(obj.name)
             self.mujoco_objects.append(obj)
 
     def reset(self):
@@ -89,7 +75,7 @@ class OpenCloseSampler(ObjectPropertySampler):
         mujoco_objects=None,
         joint_ranges=(0.0, 0.0),
     ):
-        assert state_type in ["open", "close"]
+        assert state_type in ['open', 'close']
         self.state_type = state_type
         self.joint_ranges = joint_ranges
         assert self.joint_ranges[0] <= self.joint_ranges[1]
@@ -107,7 +93,7 @@ class TurnOnOffSampler(ObjectPropertySampler):
         mujoco_objects=None,
         joint_ranges=(0.0, 0.0),
     ):
-        assert state_type in ["turnon", "turnoff"]
+        assert state_type in ['turnon', 'turnoff']
         self.state_type = state_type
         self.joint_ranges = joint_ranges
         assert self.joint_ranges[0] <= self.joint_ranges[1]

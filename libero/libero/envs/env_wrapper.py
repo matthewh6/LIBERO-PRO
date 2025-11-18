@@ -13,14 +13,14 @@ class ControlEnv:
     def __init__(
         self,
         bddl_file_name,
-        robots=["Panda"],
-        controller="OSC_POSE",
-        gripper_types="default",
+        robots=['Panda'],
+        controller='OSC_POSE',
+        gripper_types='default',
         initialization_noise=None,
         use_camera_obs=True,
         has_renderer=False,
         has_offscreen_renderer=True,
-        render_camera="frontview",
+        render_camera='frontview',
         render_collision_mesh=False,
         render_visual_mesh=True,
         render_gpu_device_id=-1,
@@ -29,20 +29,18 @@ class ControlEnv:
         ignore_done=False,
         hard_reset=True,
         camera_names=[
-            "agentview",
-            "robot0_eye_in_hand",
+            'agentview',
+            'robot0_eye_in_hand',
         ],
         camera_heights=128,
         camera_widths=128,
         camera_depths=False,
         camera_segmentations=None,
-        renderer="mujoco",
+        renderer='mujoco',
         renderer_config=None,
         **kwargs,
     ):
-        assert os.path.exists(
-            bddl_file_name
-        ), f"[error] {bddl_file_name} does not exist!"
+        assert os.path.exists(bddl_file_name), f'[error] {bddl_file_name} does not exist!'
 
         controller_configs = suite.load_controller_config(default_controller=controller)
 
@@ -50,9 +48,9 @@ class ControlEnv:
         # Check if we're using a multi-armed environment and use env_configuration argument if so
 
         # Create environment
-        self.problem_name = problem_info["problem_name"]
-        self.domain_name = problem_info["domain_name"]
-        self.language_instruction = problem_info["language_instruction"]
+        self.problem_name = problem_info['problem_name']
+        self.domain_name = problem_info['domain_name']
+        self.language_instruction = problem_info['language_instruction']
         self.env = TASK_MAPPING[self.problem_name](
             bddl_file_name,
             robots=robots,
@@ -156,8 +154,8 @@ class OffScreenRenderEnv(ControlEnv):
 
     def __init__(self, **kwargs):
         # This shouldn't be customized
-        kwargs["has_renderer"] = False
-        kwargs["has_offscreen_renderer"] = True
+        kwargs['has_renderer'] = False
+        kwargs['has_offscreen_renderer'] = True
         super().__init__(**kwargs)
 
 
@@ -169,15 +167,15 @@ class SegmentationRenderEnv(OffScreenRenderEnv):
 
     def __init__(
         self,
-        camera_segmentations="instance",
+        camera_segmentations='instance',
         camera_heights=128,
         camera_widths=128,
         **kwargs,
     ):
         assert camera_segmentations is not None
-        kwargs["camera_segmentations"] = camera_segmentations
-        kwargs["camera_heights"] = camera_heights
-        kwargs["camera_widths"] = camera_widths
+        kwargs['camera_segmentations'] = camera_segmentations
+        kwargs['camera_heights'] = camera_heights
+        kwargs['camera_widths'] = camera_widths
         self.segmentation_id_mapping = {}
         self.instance_to_id = {}
         self.segmentation_robot_id = None
@@ -191,32 +189,24 @@ class SegmentationRenderEnv(OffScreenRenderEnv):
         self.segmentation_id_mapping = {}
 
         for i, instance_name in enumerate(list(self.env.model.instances_to_ids.keys())):
-            if instance_name == "Panda0":
+            if instance_name == 'Panda0':
                 self.segmentation_robot_id = i
 
         for i, instance_name in enumerate(list(self.env.model.instances_to_ids.keys())):
-            if instance_name not in ["Panda0", "RethinkMount0", "PandaGripper0"]:
+            if instance_name not in ['Panda0', 'RethinkMount0', 'PandaGripper0']:
                 self.segmentation_id_mapping[i] = instance_name
 
-        self.instance_to_id = {
-            v: k + 1 for k, v in self.segmentation_id_mapping.items()
-        }
+        self.instance_to_id = {v: k + 1 for k, v in self.segmentation_id_mapping.items()}
         return obs
 
     def get_segmentation_instances(self, segmentation_image):
         # get all instances' segmentation separately
         seg_img_dict = {}
-        segmentation_image[segmentation_image > self.segmentation_robot_id] = (
-            self.segmentation_robot_id + 1
-        )
-        seg_img_dict["robot"] = segmentation_image * (
-            segmentation_image == self.segmentation_robot_id + 1
-        )
+        segmentation_image[segmentation_image > self.segmentation_robot_id] = self.segmentation_robot_id + 1
+        seg_img_dict['robot'] = segmentation_image * (segmentation_image == self.segmentation_robot_id + 1)
 
         for seg_id, instance_name in self.segmentation_id_mapping.items():
-            seg_img_dict[instance_name] = segmentation_image * (
-                segmentation_image == seg_id + 1
-            )
+            seg_img_dict[instance_name] = segmentation_image * (segmentation_image == seg_id + 1)
         return seg_img_dict
 
     def get_segmentation_of_interest(self, segmentation_image):
@@ -249,13 +239,10 @@ class SegmentationRenderEnv(OffScreenRenderEnv):
             inds = np.arange(256)
             rstate.shuffle(inds)
             seg_img = (
-                np.array(255.0 * cm.rainbow(inds[seg_im], 10))
-                .astype(np.uint8)[..., :3]
-                .astype(np.uint8)
-                .squeeze(-2)
+                np.array(255.0 * cm.rainbow(inds[seg_im], 10)).astype(np.uint8)[..., :3].astype(np.uint8).squeeze(-2)
             )
             print(seg_img.shape)
-            cv2.imshow("Seg Image", seg_img[::-1])
+            cv2.imshow('Seg Image', seg_img[::-1])
             cv2.waitKey(1)
             # use @inds to map each geom ID to a color
             return seg_img
@@ -268,9 +255,9 @@ class DemoRenderEnv(ControlEnv):
 
     def __init__(self, **kwargs):
         # This shouldn't be customized
-        kwargs["has_renderer"] = False
-        kwargs["has_offscreen_renderer"] = True
-        kwargs["render_camera"] = "frontview"
+        kwargs['has_renderer'] = False
+        kwargs['has_offscreen_renderer'] = True
+        kwargs['render_camera'] = 'frontview'
 
         super().__init__(**kwargs)
 

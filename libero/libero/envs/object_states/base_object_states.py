@@ -36,20 +36,14 @@ class ObjectState(BaseObjectState):
         self.env = env
         self.object_name = object_name
         self.is_fixture = is_fixture
-        self.query_dict = (
-            self.env.fixtures_dict if self.is_fixture else self.env.objects_dict
-        )
-        self.object_state_type = "object"
-        self.has_turnon_affordance = hasattr(
-            self.env.get_object(self.object_name), "turn_on"
-        )
+        self.query_dict = self.env.fixtures_dict if self.is_fixture else self.env.objects_dict
+        self.object_state_type = 'object'
+        self.has_turnon_affordance = hasattr(self.env.get_object(self.object_name), 'turn_on')
 
     def get_geom_state(self):
         object_pos = self.env.sim.data.body_xpos[self.env.obj_body_id[self.object_name]]
-        object_quat = self.env.sim.data.body_xquat[
-            self.env.obj_body_id[self.object_name]
-        ]
-        return {"pos": object_pos, "quat": object_quat}
+        object_quat = self.env.sim.data.body_xquat[self.env.obj_body_id[self.object_name]]
+        return {'pos': object_pos, 'quat': object_quat}
 
     def check_contact(self, other):
         object_1 = self.env.get_object(self.object_name)
@@ -58,13 +52,9 @@ class ObjectState(BaseObjectState):
 
     def check_contain(self, other):
         object_1 = self.env.get_object(self.object_name)
-        object_1_position = self.env.sim.data.body_xpos[
-            self.env.obj_body_id[self.object_name]
-        ]
+        object_1_position = self.env.sim.data.body_xpos[self.env.obj_body_id[self.object_name]]
         object_2 = self.env.get_object(other.object_name)
-        object_2_position = self.env.sim.data.body_xpos[
-            self.env.obj_body_id[other.object_name]
-        ]
+        object_2_position = self.env.sim.data.body_xpos[self.env.obj_body_id[other.object_name]]
         return object_1.in_box(object_1_position, object_2_position)
 
     def get_joint_state(self):
@@ -77,20 +67,13 @@ class ObjectState(BaseObjectState):
 
     def check_ontop(self, other):
         this_object = self.env.get_object(self.object_name)
-        this_object_position = self.env.sim.data.body_xpos[
-            self.env.obj_body_id[self.object_name]
-        ]
+        this_object_position = self.env.sim.data.body_xpos[self.env.obj_body_id[self.object_name]]
         other_object = self.env.get_object(other.object_name)
-        other_object_position = self.env.sim.data.body_xpos[
-            self.env.obj_body_id[other.object_name]
-        ]
+        other_object_position = self.env.sim.data.body_xpos[self.env.obj_body_id[other.object_name]]
         return (
             (this_object_position[2] <= other_object_position[2])
             and self.check_contact(other)
-            and (
-                np.linalg.norm(this_object_position[:2] - other_object_position[:2])
-                < 0.03
-            )
+            and (np.linalg.norm(this_object_position[:2] - other_object_position[:2]) < 0.03)
         )
 
     def set_joint(self, qpos=1.5):
@@ -144,17 +127,13 @@ class SiteObjectState(BaseObjectState):
         self.object_name = object_name
         self.parent_name = parent_name
         self.is_fixture = self.parent_name in self.env.fixtures_dict
-        self.query_dict = (
-            self.env.fixtures_dict if self.is_fixture else self.env.objects_dict
-        )
-        self.object_state_type = "site"
+        self.query_dict = self.env.fixtures_dict if self.is_fixture else self.env.objects_dict
+        self.object_state_type = 'site'
 
     def get_geom_state(self):
         object_pos = self.env.sim.data.get_site_xpos(self.object_name)
-        object_quat = transform_utils.mat2quat(
-            self.env.sim.data.get_site_xmat(self.object_name)
-        )
-        return {"pos": object_pos, "quat": object_quat}
+        object_quat = transform_utils.mat2quat(self.env.sim.data.get_site_xmat(self.object_name))
+        return {'pos': object_pos, 'quat': object_quat}
 
     def check_contain(self, other):
         this_object = self.env.object_sites_dict[self.object_name]
@@ -162,12 +141,8 @@ class SiteObjectState(BaseObjectState):
         this_object_mat = self.env.sim.data.get_site_xmat(self.object_name)
 
         other_object = self.env.get_object(other.object_name)
-        other_object_position = self.env.sim.data.body_xpos[
-            self.env.obj_body_id[other.object_name]
-        ]
-        return this_object.in_box(
-            this_object_position, this_object_mat, other_object_position
-        )
+        other_object_position = self.env.sim.data.body_xpos[self.env.obj_body_id[other.object_name]]
+        return this_object.in_box(this_object_position, this_object_mat, other_object_position)
 
     def check_contact(self, other):
         """
@@ -177,21 +152,17 @@ class SiteObjectState(BaseObjectState):
 
     def check_ontop(self, other):
         this_object = self.env.object_sites_dict[self.object_name]
-        if hasattr(this_object, "under"):
+        if hasattr(this_object, 'under'):
             this_object_position = self.env.sim.data.get_site_xpos(self.object_name)
             this_object_mat = self.env.sim.data.get_site_xmat(self.object_name)
             other_object = self.env.get_object(other.object_name)
-            other_object_position = self.env.sim.data.body_xpos[
-                self.env.obj_body_id[other.object_name]
-            ]
+            other_object_position = self.env.sim.data.body_xpos[self.env.obj_body_id[other.object_name]]
             # print(self.object_name, this_object_position)
             # print(other_object_position)
 
             parent_object = self.env.get_object(self.parent_name)
             if parent_object is None:
-                return this_object.under(
-                    this_object_position, this_object_mat, other_object_position
-                )
+                return this_object.under(this_object_position, this_object_mat, other_object_position)
             else:
                 return this_object.under(
                     this_object_position, this_object_mat, other_object_position

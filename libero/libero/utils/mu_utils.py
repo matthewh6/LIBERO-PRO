@@ -12,12 +12,10 @@ MU_DICT = {}
 SCENE_DICT = {}
 
 
-def register_mu(scene_type="general"):
+def register_mu(scene_type='general'):
     def _func(target_class):
         """For reusing initial conditions easily, we register each pre-defined initial conditions in a dictionary."""
-        key = "_".join(
-            re.sub(r"([A-Z])", r" \1", target_class.__name__).split()
-        ).lower()
+        key = '_'.join(re.sub(r'([A-Z])', r' \1', target_class.__name__).split()).lower()
         MU_DICT[key.lower()] = target_class
         if scene_type not in SCENE_DICT:
             SCENE_DICT[scene_type.lower()] = []
@@ -39,10 +37,7 @@ def get_scene_class(scene_name):
 
 
 class InitialSceneTemplates:
-    def __init__(
-        self, workspace_name="main_table", fixture_num_info={}, object_num_info={}
-    ):
-
+    def __init__(self, workspace_name='main_table', fixture_num_info={}, object_num_info={}):
         self.workspace_name = workspace_name
         # print(self.workspace_name)
 
@@ -54,28 +49,22 @@ class InitialSceneTemplates:
         for fixture_category_name in self.fixture_object_dict.keys():
             if (
                 fixture_category_name != self.workspace_name
-                and fixture_category_name != "table"
-                and fixture_category_name != "living_room_table"
-                and fixture_category_name != "study_table"
-                and fixture_category_name != "kitchen_table"
-                and fixture_category_name != "coffee_table"
-                and fixture_category_name != "floor"
+                and fixture_category_name != 'table'
+                and fixture_category_name != 'living_room_table'
+                and fixture_category_name != 'study_table'
+                and fixture_category_name != 'kitchen_table'
+                and fixture_category_name != 'coffee_table'
+                and fixture_category_name != 'floor'
             ):
                 for fixture_name in self.fixture_object_dict[fixture_category_name]:
-                    affordance_fixture_info_dict[fixture_name] = affordances[
-                        fixture_category_name
-                    ]
+                    affordance_fixture_info_dict[fixture_name] = affordances[fixture_category_name]
         for category_name in self.movable_object_dict.keys():
             if category_name in affordances:
                 for object_name in self.movable_object_dict[category_name]:
-                    affordance_fixture_info_dict[object_name] = affordances[
-                        category_name
-                    ]
+                    affordance_fixture_info_dict[object_name] = affordances[category_name]
         # print(affordance_fixture_info_dict)
-        self.affordance_region_kwargs_list = (
-            get_affordance_region_kwargs_list_from_fixture_info(
-                affordance_fixture_info_dict
-            )
+        self.affordance_region_kwargs_list = get_affordance_region_kwargs_list_from_fixture_info(
+            affordance_fixture_info_dict
         )
 
         self.regions = {}
@@ -113,8 +102,8 @@ class InitialSceneTemplates:
             target_name = self.workspace_name
         region_key_value = {
             region_name: {
-                "target": target_name,
-                "ranges": [
+                'target': target_name,
+                'ranges': [
                     (
                         region_centroid_xy[0] - region_half_len,
                         region_centroid_xy[1] - region_half_len,
@@ -122,7 +111,7 @@ class InitialSceneTemplates:
                         region_centroid_xy[1] + region_half_len,
                     )
                 ],
-                "yaw_rotation": [yaw_rotation],
+                'yaw_rotation': [yaw_rotation],
             }
         }
         print

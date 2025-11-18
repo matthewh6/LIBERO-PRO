@@ -4,35 +4,32 @@ from libero.libero.envs.robots import *
 from libero.libero.envs.objects import *
 from libero.libero.envs.predicates import *
 from libero.libero.envs.regions import *
-from libero.libero.envs.utils import rectangle2xyrange
 
 
 @register_problem
 class Libero_Tabletop_Manipulation(BDDLBaseDomain):
     def __init__(self, bddl_file_name, *args, **kwargs):
-        self.workspace_name = "main_table"
+        self.workspace_name = 'main_table'
         self.visualization_sites_list = []
-        if "table_full_size" in kwargs:
+        if 'table_full_size' in kwargs:
             self.table_full_size = table_full_size
         else:
             self.table_full_size = (1.0, 1.2, 0.05)
         self.table_offset = (0, 0, 0.90)
         # For z offset of environment fixtures
         self.z_offset = 0.01 - self.table_full_size[2]
-        kwargs.update(
-            {"robots": [f"Mounted{robot_name}" for robot_name in kwargs["robots"]]}
-        )
-        kwargs.update({"workspace_offset": self.table_offset})
-        kwargs.update({"arena_type": "table"})
+        kwargs.update({'robots': [f'Mounted{robot_name}' for robot_name in kwargs['robots']]})
+        kwargs.update({'workspace_offset': self.table_offset})
+        kwargs.update({'arena_type': 'table'})
 
-        if "scene_xml" not in kwargs or kwargs["scene_xml"] is None:
-            kwargs.update({"scene_xml": "scenes/libero_tabletop_base_style.xml"})
-        if "scene_properties" not in kwargs or kwargs["scene_properties"] is None:
+        if 'scene_xml' not in kwargs or kwargs['scene_xml'] is None:
+            kwargs.update({'scene_xml': 'scenes/libero_tabletop_base_style.xml'})
+        if 'scene_properties' not in kwargs or kwargs['scene_properties'] is None:
             kwargs.update(
                 {
-                    "scene_properties": {
-                        "floor_style": "light-gray",
-                        "wall_style": "light-gray-plaster",
+                    'scene_properties': {
+                        'floor_style': 'light-gray',
+                        'wall_style': 'light-gray-plaster',
                     }
                 }
             )
@@ -41,32 +38,29 @@ class Libero_Tabletop_Manipulation(BDDLBaseDomain):
 
     def _load_fixtures_in_arena(self, mujoco_arena):
         """Nothing extra to load in this simple problem."""
-        for fixture_category in list(self.parsed_problem["fixtures"].keys()):
-            if fixture_category == "table":
+        for fixture_category in list(self.parsed_problem['fixtures'].keys()):
+            if fixture_category == 'table':
                 continue
 
-            for fixture_instance in self.parsed_problem["fixtures"][fixture_category]:
+            for fixture_instance in self.parsed_problem['fixtures'][fixture_category]:
                 self.fixtures_dict[fixture_instance] = get_object_fn(fixture_category)(
                     name=fixture_instance,
                     joints=None,
                 )
 
     def _load_objects_in_arena(self, mujoco_arena):
-        objects_dict = self.parsed_problem["objects"]
+        objects_dict = self.parsed_problem['objects']
         for category_name in objects_dict.keys():
             for object_name in objects_dict[category_name]:
-                self.objects_dict[object_name] = get_object_fn(category_name)(
-                    name=object_name
-                )
+                self.objects_dict[object_name] = get_object_fn(category_name)(name=object_name)
 
     def _load_sites_in_arena(self, mujoco_arena):
         # Create site objects
         object_sites_dict = {}
-        region_dict = self.parsed_problem["regions"]
+        region_dict = self.parsed_problem['regions']
         for object_region_name in list(region_dict.keys()):
-
-            if "main_table" in object_region_name:
-                ranges = region_dict[object_region_name]["ranges"][0]
+            if 'main_table' in object_region_name:
+                ranges = region_dict[object_region_name]['ranges'][0]
                 assert ranges[2] >= ranges[0] and ranges[3] >= ranges[1]
                 zone_size = ((ranges[2] - ranges[0]) / 2, (ranges[3] - ranges[1]) / 2)
                 zone_centroid_xy = (
@@ -75,7 +69,7 @@ class Libero_Tabletop_Manipulation(BDDLBaseDomain):
                 )
                 target_zone = TargetZone(
                     name=object_region_name,
-                    rgba=region_dict[object_region_name]["rgba"],
+                    rgba=region_dict[object_region_name]['rgba'],
                     zone_size=zone_size,
                     zone_centroid_xy=zone_centroid_xy,
                 )
@@ -88,36 +82,36 @@ class Libero_Tabletop_Manipulation(BDDLBaseDomain):
                         quat=target_zone.quat,
                         rgba=target_zone.rgba,
                         size=target_zone.size,
-                        type="box",
+                        type='box',
                     )
                 )
                 continue
             # Otherwise the processing is consistent
             for query_dict in [self.objects_dict, self.fixtures_dict]:
-                for (name, body) in query_dict.items():
+                for name, body in query_dict.items():
                     try:
-                        if "worldbody" not in list(body.__dict__.keys()):
+                        if 'worldbody' not in list(body.__dict__.keys()):
                             # This is a special case for CompositeObject, we skip this as this is very rare in our benchmark
                             continue
                     except:
                         continue
-                    for part in body.worldbody.find("body").findall(".//body"):
-                        sites = part.findall(".//site")
-                        joints = part.findall("./joint")
+                    for part in body.worldbody.find('body').findall('.//body'):
+                        sites = part.findall('.//site')
+                        joints = part.findall('./joint')
                         if sites == []:
                             break
                         for site in sites:
-                            site_name = site.get("name")
+                            site_name = site.get('name')
                             if site_name == object_region_name:
                                 object_sites_dict[object_region_name] = SiteObject(
                                     name=site_name,
                                     parent_name=body.name,
-                                    joints=[joint.get("name") for joint in joints],
-                                    size=site.get("size"),
-                                    rgba=site.get("rgba"),
-                                    site_type=site.get("type"),
-                                    site_pos=site.get("pos"),
-                                    site_quat=site.get("quat"),
+                                    joints=[joint.get('name') for joint in joints],
+                                    size=site.get('size'),
+                                    rgba=site.get('rgba'),
+                                    site_type=site.get('type'),
+                                    site_pos=site.get('pos'),
+                                    site_quat=site.get('quat'),
                                     object_properties=body.object_properties,
                                 )
         self.object_sites_dict = object_sites_dict
@@ -125,7 +119,7 @@ class Libero_Tabletop_Manipulation(BDDLBaseDomain):
         # Keep track of visualization objects
         for query_dict in [self.fixtures_dict, self.objects_dict]:
             for name, body in query_dict.items():
-                if body.object_properties["vis_site_names"] != {}:
+                if body.object_properties['vis_site_names'] != {}:
                     self.visualization_sites_list.append(name)
 
     def _add_placement_initializer(self):
@@ -136,7 +130,7 @@ class Libero_Tabletop_Manipulation(BDDLBaseDomain):
         """
         Check if the goal is achieved. Consider conjunction goals at the moment
         """
-        goal_state = self.parsed_problem["goal_state"]
+        goal_state = self.parsed_problem['goal_state']
         result = True
         for state in goal_state:
             result = self._eval_predicate(state) and result
@@ -157,9 +151,7 @@ class Libero_Tabletop_Manipulation(BDDLBaseDomain):
             # Checking unary logical predicates
             predicate_fn_name = state[0]
             object_name = state[1]
-            return eval_predicate_fn(
-                predicate_fn_name, self.object_states_dict[object_name]
-            )
+            return eval_predicate_fn(predicate_fn_name, self.object_states_dict[object_name])
 
     def _setup_references(self):
         super()._setup_references()
@@ -170,23 +162,20 @@ class Libero_Tabletop_Manipulation(BDDLBaseDomain):
         self.set_visualization()
 
     def set_visualization(self):
-
         for object_name in self.visualization_sites_list:
             for _, (site_name, site_visible) in (
-                self.get_object(object_name).object_properties["vis_site_names"].items()
+                self.get_object(object_name).object_properties['vis_site_names'].items()
             ):
                 vis_g_id = self.sim.model.site_name2id(site_name)
                 if ((self.sim.model.site_rgba[vis_g_id][3] <= 0) and site_visible) or (
                     (self.sim.model.site_rgba[vis_g_id][3] > 0) and not site_visible
                 ):
                     # We toggle the alpha value
-                    self.sim.model.site_rgba[vis_g_id][3] = (
-                        1 - self.sim.model.site_rgba[vis_g_id][3]
-                    )
+                    self.sim.model.site_rgba[vis_g_id][3] = 1 - self.sim.model.site_rgba[vis_g_id][3]
 
     def _setup_camera(self, mujoco_arena):
         mujoco_arena.set_camera(
-            camera_name="agentview",
+            camera_name='agentview',
             pos=[0.6586131746834771, 0.0, 1.6103500240372423],
             quat=[
                 0.6380177736282349,
@@ -197,11 +186,9 @@ class Libero_Tabletop_Manipulation(BDDLBaseDomain):
         )
 
         # For visualization purpose
+        mujoco_arena.set_camera(camera_name='frontview', pos=[1.0, 0.0, 1.48], quat=[0.56, 0.43, 0.43, 0.56])
         mujoco_arena.set_camera(
-            camera_name="frontview", pos=[1.0, 0.0, 1.48], quat=[0.56, 0.43, 0.43, 0.56]
-        )
-        mujoco_arena.set_camera(
-            camera_name="galleryview",
+            camera_name='galleryview',
             pos=[2.844547668904445, 2.1279684793440667, 3.128616846013882],
             quat=[
                 0.42261379957199097,

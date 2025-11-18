@@ -3,45 +3,41 @@ import re
 import numpy as np
 
 from robosuite.models.objects import MujocoXMLObject
-from robosuite.utils.mjcf_utils import xml_path_completion
 
 import pathlib
 
 absolute_path = pathlib.Path(__file__).parent.parent.parent.absolute()
 
 from libero.libero.envs.base_object import (
-    register_visual_change_object,
     register_object,
 )
 
 
 class TurbosquidObjects(MujocoXMLObject):
-    def __init__(self, name, obj_name, joints=[dict(type="free", damping="0.0005")]):
+    def __init__(self, name, obj_name, joints=[dict(type='free', damping='0.0005')]):
         super().__init__(
             os.path.join(
                 str(absolute_path),
-                f"assets/turbosquid_objects/{obj_name}/{obj_name}.xml",
+                f'assets/turbosquid_objects/{obj_name}/{obj_name}.xml',
             ),
             name=name,
             joints=joints,
-            obj_type="all",
+            obj_type='all',
             duplicate_collision_geoms=False,
         )
-        self.category_name = "_".join(
-            re.sub(r"([A-Z])", r" \1", self.__class__.__name__).split()
-        ).lower()
+        self.category_name = '_'.join(re.sub(r'([A-Z])', r' \1', self.__class__.__name__).split()).lower()
         self.rotation = (0, 0)
-        self.rotation_axis = "x"
-        self.object_properties = {"vis_site_names": {}}
+        self.rotation_axis = 'x'
+        self.object_properties = {'vis_site_names': {}}
 
 
 @register_object
 class WoodenTray(TurbosquidObjects):
     def __init__(
         self,
-        name="wooden_tray",
-        obj_name="wooden_tray",
-        joints=[dict(type="free", damping="0.0005")],
+        name='wooden_tray',
+        obj_name='wooden_tray',
+        joints=[dict(type='free', damping='0.0005')],
     ):
         super().__init__(name, obj_name, joints)
 
@@ -50,22 +46,22 @@ class WoodenTray(TurbosquidObjects):
 class WhiteStorageBox(TurbosquidObjects):
     def __init__(
         self,
-        name="white_storage_box",
-        obj_name="white_storage_box",
-        joints=[dict(type="free", damping="0.0005")],
+        name='white_storage_box',
+        obj_name='white_storage_box',
+        joints=[dict(type='free', damping='0.0005')],
     ):
         super().__init__(name, obj_name, joints)
         self.rotation = (0, 0)
-        self.rotation_axis = "y"
+        self.rotation_axis = 'y'
 
 
 @register_object
 class WoodenShelf(TurbosquidObjects):
     def __init__(
         self,
-        name="wooden_shelf",
-        obj_name="wooden_shelf",
-        joints=[dict(type="free", damping="0.0005")],
+        name='wooden_shelf',
+        obj_name='wooden_shelf',
+        joints=[dict(type='free', damping='0.0005')],
     ):
         super().__init__(name, obj_name, joints)
 
@@ -74,9 +70,9 @@ class WoodenShelf(TurbosquidObjects):
 class WoodenTwoLayerShelf(TurbosquidObjects):
     def __init__(
         self,
-        name="wooden_two_layer_shelf",
-        obj_name="wooden_two_layer_shelf",
-        joints=[dict(type="free", damping="0.0005")],
+        name='wooden_two_layer_shelf',
+        obj_name='wooden_two_layer_shelf',
+        joints=[dict(type='free', damping='0.0005')],
     ):
         super().__init__(name, obj_name, joints)
 
@@ -85,9 +81,9 @@ class WoodenTwoLayerShelf(TurbosquidObjects):
 class WineRack(TurbosquidObjects):
     def __init__(
         self,
-        name="wine_rack",
-        obj_name="wine_rack",
-        joints=[dict(type="free", damping="0.0005")],
+        name='wine_rack',
+        obj_name='wine_rack',
+        joints=[dict(type='free', damping='0.0005')],
     ):
         super().__init__(name, obj_name, joints)
 
@@ -96,9 +92,9 @@ class WineRack(TurbosquidObjects):
 class BrownRack(TurbosquidObjects):
     def __init__(
         self,
-        name="brown_rack",
-        obj_name="brown_rack",
-        joints=[dict(type="free", damping="0.0005")],
+        name='brown_rack',
+        obj_name='brown_rack',
+        joints=[dict(type='free', damping='0.0005')],
     ):
         super().__init__(name, obj_name, joints)
 
@@ -117,9 +113,9 @@ class WineRackStand(TurbosquidObjects):
 class WineBottle(TurbosquidObjects):
     def __init__(
         self,
-        name="wine_bottle",
-        obj_name="wine_bottle",
-        joints=[dict(type="free", damping="0.0005")],
+        name='wine_bottle',
+        obj_name='wine_bottle',
+        joints=[dict(type='free', damping='0.0005')],
     ):
         super().__init__(name, obj_name, joints)
 
@@ -128,12 +124,11 @@ class WineBottle(TurbosquidObjects):
 class WhiteBottle(TurbosquidObjects):
     def __init__(
         self,
-        name="white_bottle",
-        obj_name="white_bottle",
-        joints=[dict(type="free", damping="0.0005")],
+        name='white_bottle',
+        obj_name='white_bottle',
+        joints=[dict(type='free', damping='0.0005')],
     ):
         super().__init__(name, obj_name, joints)
-
 
 
 @register_object
@@ -142,9 +137,9 @@ class DiningSetGroup(TurbosquidObjects):
 
     def __init__(
         self,
-        name="dining_set_group",
-        obj_name="dining_set_group",
-        joints=[dict(type="free", damping="0.0005")],
+        name='dining_set_group',
+        obj_name='dining_set_group',
+        joints=[dict(type='free', damping='0.0005')],
     ):
         super().__init__(name, obj_name, joints)
 
@@ -153,9 +148,9 @@ class DiningSetGroup(TurbosquidObjects):
 class BowlDrainer(TurbosquidObjects):
     def __init__(
         self,
-        name="bowl_drainer",
-        obj_name="bowl_drainer",
-        joints=[dict(type="free", damping="0.0005")],
+        name='bowl_drainer',
+        obj_name='bowl_drainer',
+        joints=[dict(type='free', damping='0.0005')],
     ):
         super().__init__(name, obj_name, joints)
 
@@ -164,9 +159,9 @@ class BowlDrainer(TurbosquidObjects):
 class MokaPot(TurbosquidObjects):
     def __init__(
         self,
-        name="moka_pot",
-        obj_name="moka_pot",
-        joints=[dict(type="free", damping="0.0005")],
+        name='moka_pot',
+        obj_name='moka_pot',
+        joints=[dict(type='free', damping='0.0005')],
     ):
         super().__init__(name, obj_name, joints)
 
@@ -175,9 +170,9 @@ class MokaPot(TurbosquidObjects):
 class YellowMokaPot(TurbosquidObjects):
     def __init__(
         self,
-        name="yellow_moka_pot",
-        obj_name="yellow_moka_pot",
-        joints=[dict(type="free", damping="0.0005")],
+        name='yellow_moka_pot',
+        obj_name='yellow_moka_pot',
+        joints=[dict(type='free', damping='0.0005')],
     ):
         super().__init__(name, obj_name, joints)
 
@@ -186,9 +181,9 @@ class YellowMokaPot(TurbosquidObjects):
 class BlackBook(TurbosquidObjects):
     def __init__(
         self,
-        name="black_book",
-        obj_name="black_book",
-        joints=[dict(type="free", damping="0.0005")],
+        name='black_book',
+        obj_name='black_book',
+        joints=[dict(type='free', damping='0.0005')],
     ):
         super().__init__(name, obj_name, joints)
         self.rotation = (-np.pi / 2, -np.pi / 4)
@@ -198,9 +193,9 @@ class BlackBook(TurbosquidObjects):
 class YellowBook(TurbosquidObjects):
     def __init__(
         self,
-        name="yellow_book",
-        obj_name="yellow_book",
-        joints=[dict(type="free", damping="0.0005")],
+        name='yellow_book',
+        obj_name='yellow_book',
+        joints=[dict(type='free', damping='0.0005')],
     ):
         super().__init__(name, obj_name, joints)
         self.rotation = (-np.pi / 2, -np.pi / 4)
@@ -210,9 +205,9 @@ class YellowBook(TurbosquidObjects):
 class RedCoffeeMug(TurbosquidObjects):
     def __init__(
         self,
-        name="red_coffee_mug",
-        obj_name="red_coffee_mug",
-        joints=[dict(type="free", damping="0.0005")],
+        name='red_coffee_mug',
+        obj_name='red_coffee_mug',
+        joints=[dict(type='free', damping='0.0005')],
     ):
         super().__init__(name, obj_name, joints)
         self.rotation = (-np.pi / 2, -np.pi / 2)
@@ -222,9 +217,9 @@ class RedCoffeeMug(TurbosquidObjects):
 class DeskCaddy(TurbosquidObjects):
     def __init__(
         self,
-        name="desk_caddy",
-        obj_name="desk_caddy",
-        joints=[dict(type="free", damping="0.0005")],
+        name='desk_caddy',
+        obj_name='desk_caddy',
+        joints=[dict(type='free', damping='0.0005')],
     ):
         super().__init__(name, obj_name, joints)
 
@@ -233,19 +228,20 @@ class DeskCaddy(TurbosquidObjects):
 class YellowDeskCaddy(TurbosquidObjects):
     def __init__(
         self,
-        name="yellow_desk_caddy",
-        obj_name="yellow_desk_caddy",
-        joints=[dict(type="free", damping="0.0005")],
+        name='yellow_desk_caddy',
+        obj_name='yellow_desk_caddy',
+        joints=[dict(type='free', damping='0.0005')],
     ):
         super().__init__(name, obj_name, joints)
+
 
 @register_object
 class PorcelainMug(TurbosquidObjects):
     def __init__(
         self,
-        name="porcelain_mug",
-        obj_name="porcelain_mug",
-        joints=[dict(type="free", damping="0.0005")],
+        name='porcelain_mug',
+        obj_name='porcelain_mug',
+        joints=[dict(type='free', damping='0.0005')],
     ):
         super().__init__(name, obj_name, joints)
         self.rotation = (-np.pi / 2, -np.pi / 2)
@@ -255,9 +251,9 @@ class PorcelainMug(TurbosquidObjects):
 class WhitePorcelainMug(TurbosquidObjects):
     def __init__(
         self,
-        name="white_porcelain_mug",
-        obj_name="white_porcelain_mug",
-        joints=[dict(type="free", damping="0.0005")],
+        name='white_porcelain_mug',
+        obj_name='white_porcelain_mug',
+        joints=[dict(type='free', damping='0.0005')],
     ):
         super().__init__(name, obj_name, joints)
         self.rotation = (-np.pi / 2, -np.pi / 2)
@@ -267,20 +263,21 @@ class WhitePorcelainMug(TurbosquidObjects):
 class WhiteYellowMug(TurbosquidObjects):
     def __init__(
         self,
-        name="white_yellow_mug",
-        obj_name="white_yellow_mug",
-        joints=[dict(type="free", damping="0.0005")],
+        name='white_yellow_mug',
+        obj_name='white_yellow_mug',
+        joints=[dict(type='free', damping='0.0005')],
     ):
         super().__init__(name, obj_name, joints)
         self.rotation = (-np.pi / 2, -np.pi / 2)
-        
+
+
 @register_object
 class RedYellowBook(TurbosquidObjects):
     def __init__(
         self,
-        name="red_yellow_book",
-        obj_name="red_yellow_book",
-        joints=[dict(type="free", damping="0.0005")],
+        name='red_yellow_book',
+        obj_name='red_yellow_book',
+        joints=[dict(type='free', damping='0.0005')],
     ):
         super().__init__(name, obj_name, joints)
         self.rotation = (-np.pi / 2, -np.pi / 2)

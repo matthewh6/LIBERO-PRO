@@ -1,0 +1,5 @@
+assets: /mmfs1/gscratch/weirdlab/hongmm/p-diff-exp/LIBERO_PRO/libero/libero/./assets
+bddl_files: /mmfs1/gscratch/weirdlab/hongmm/p-diff-exp/LIBERO_PRO/libero/libero/./bddl_files
+benchmark_root: /mmfs1/gscratch/weirdlab/hongmm/p-diff-exp/LIBERO_PRO/libero/libero
+datasets: /mmfs1/gscratch/weirdlab/hongmm/p-diff-exp/LIBERO_PRO/libero/libero/../datasets
+init_states: /mmfs1/gscratch/weirdlab/hongmm/p-diff-exp/LIBERO_PRO/libero/libero/./init_files

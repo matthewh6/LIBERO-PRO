@@ -1,26 +1,16 @@
 import re
 import numpy as np
-import robosuite.utils.transform_utils as T
 import pathlib
 
 absolute_path = pathlib.Path(__file__).parent.parent.parent.absolute()
-from robosuite.models.objects import MujocoXMLObject
 from robosuite.utils.mjcf_utils import (
-    xml_path_completion,
     array_to_string,
-    find_elements,
-    CustomMaterial,
-    add_to_dict,
-    RED,
-    GREEN,
-    BLUE,
 )
 
 # from robosuite.models.objects import BoxObject
 from libero.libero.envs.objects.site_object import SiteObject
 
 from libero.libero.envs.base_object import (
-    register_visual_change_object,
     register_object,
 )
 
@@ -40,9 +30,7 @@ class TargetZone(SiteObject):
         # site_pos="0 0 0",
         # site_quat="1 0 0 0",
     ):
-        self.category_name = "_".join(
-            re.sub(r"([A-Z])", r" \1", self.__class__.__name__).split()
-        ).lower()
+        self.category_name = '_'.join(re.sub(r'([A-Z])', r' \1', self.__class__.__name__).split()).lower()
         self.size = (zone_size[0], zone_size[1], zone_height)
         self.pos = zone_centroid_xy + (z_offset,)
         self.quat = (1, 0, 0, 0)
@@ -50,7 +38,7 @@ class TargetZone(SiteObject):
             name=name,
             size=self.size,
             rgba=rgba,
-            site_type="box",
+            site_type='box',
             site_pos=array_to_string(self.pos),
             site_quat=array_to_string(self.quat),
         )

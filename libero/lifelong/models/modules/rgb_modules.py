@@ -3,6 +3,7 @@ This file contains all neural modules related to encoding the spatial
 information of obs_t, i.e., the abstracted knowledge of the current visual
 input conditioned on the language.
 """
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -21,9 +22,7 @@ class PatchEncoder(nn.Module):
     A patch encoder that does a linear projection of patches in a RGB image.
     """
 
-    def __init__(
-        self, input_shape, patch_size=[16, 16], embed_size=64, no_patch_embed_bias=False
-    ):
+    def __init__(self, input_shape, patch_size=[16, 16], embed_size=64, no_patch_embed_bias=False):
         super().__init__()
         C, H, W = input_shape
         num_patches = (H // patch_size[0] // 2) * (W // patch_size[1] // 2)
@@ -33,12 +32,8 @@ class PatchEncoder(nn.Module):
         self.h, self.w = H // patch_size[0] // 2, W // patch_size[1] // 2
 
         self.conv = nn.Sequential(
-            nn.Conv2d(
-                C, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False
-            ),
-            nn.BatchNorm2d(
-                64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True
-            ),
+            nn.Conv2d(C, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False),
+            nn.BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
             nn.ReLU(inplace=True),
         )
         self.proj = nn.Conv2d(
@@ -74,8 +69,8 @@ class SpatialSoftmax(nn.Module):
 
         pos_x = pos_x.reshape(1, in_w * in_h)
         pos_y = pos_y.reshape(1, in_w * in_h)
-        self.register_buffer("pos_x", pos_x)
-        self.register_buffer("pos_y", pos_y)
+        self.register_buffer('pos_x', pos_x)
+        self.register_buffer('pos_y', pos_y)
 
         if num_kp is None:
             self._num_kp = in_c
@@ -97,12 +92,8 @@ class SpatialSoftmax(nn.Module):
         h = h.contiguous().view(-1, self._in_h * self._in_w)
 
         attention = F.softmax(h, dim=-1)
-        keypoint_x = (
-            (self.pos_x * attention).sum(1, keepdims=True).view(-1, self._num_kp)
-        )
-        keypoint_y = (
-            (self.pos_y * attention).sum(1, keepdims=True).view(-1, self._num_kp)
-        )
+        keypoint_x = (self.pos_x * attention).sum(1, keepdims=True).view(-1, self._num_kp)
+        keypoint_y = (self.pos_y * attention).sum(1, keepdims=True).view(-1, self._num_kp)
         keypoints = torch.cat([keypoint_x, keypoint_y], dim=1)
         return keypoints
 
@@ -111,9 +102,7 @@ class SpatialProjection(nn.Module):
     def __init__(self, input_shape, out_dim):
         super().__init__()
 
-        assert (
-            len(input_shape) == 3
-        ), "[error] spatial projection: input shape is not a 3-tuple"
+        assert len(input_shape) == 3, '[error] spatial projection: input shape is not a 3-tuple'
         in_c, in_h, in_w = input_shape
         num_kp = out_dim // 2
         self.out_dim = out_dim
@@ -157,21 +146,16 @@ class ResnetEncoder(nn.Module):
         remove_layer_num=2,
         no_stride=False,
         language_dim=768,
-        language_fusion="film",
+        language_fusion='film',
     ):
-
         super().__init__()
 
         ### 1. encode input (images) using convolutional layers
-        assert remove_layer_num <= 5, "[error] please only remove <=5 layers"
-        layers = list(torchvision.models.resnet18(pretrained=pretrained).children())[
-            :-remove_layer_num
-        ]
+        assert remove_layer_num <= 5, '[error] please only remove <=5 layers'
+        layers = list(torchvision.models.resnet18(pretrained=pretrained).children())[:-remove_layer_num]
         self.remove_layer_num = remove_layer_num
 
-        assert (
-            len(input_shape) == 3
-        ), "[error] input shape of resnet should be (C, H, W)"
+        assert len(input_shape) == 3, '[error] input shape of resnet should be (C, H, W)'
 
         in_channels = input_shape[0]
         if in_channels != 3:  # has eye_in_hand, increase channel size
@@ -197,7 +181,7 @@ class ResnetEncoder(nn.Module):
         self.block_4 = layers[5][1]
 
         self.language_fusion = language_fusion
-        if language_fusion != "none":
+        if language_fusion != 'none':
             self.lang_proj1 = nn.Linear(language_dim, 64 * 2)
             self.lang_proj2 = nn.Linear(language_dim, 64 * 2)
             self.lang_proj3 = nn.Linear(language_dim, 128 * 2)
@@ -205,18 +189,13 @@ class ResnetEncoder(nn.Module):
 
         if freeze:
             if in_channels != 3:
-                raise Exception(
-                    "[error] cannot freeze pretrained "
-                    + "resnet with the extra eye_in_hand input"
-                )
+                raise Exception('[error] cannot freeze pretrained ' + 'resnet with the extra eye_in_hand input')
             for param in self.resnet18_embeddings.parameters():
                 param.requires_grad = False
 
         ### 2. project the encoded input to a latent space
         x = torch.zeros(1, *input_shape)
-        y = self.block_4(
-            self.block_3(self.block_2(self.block_1(self.resnet18_base(x))))
-        )
+        y = self.block_4(self.block_3(self.block_2(self.block_1(self.resnet18_base(x)))))
         output_shape = y.shape  # compute the out dim
         self.projection_layer = SpatialProjection(output_shape[1:], output_size)
         self.output_shape = self.projection_layer(y).shape
@@ -225,35 +204,27 @@ class ResnetEncoder(nn.Module):
         h = self.resnet18_base(x)
 
         h = self.block_1(h)
-        if langs is not None and self.language_fusion != "none":  # FiLM layer
+        if langs is not None and self.language_fusion != 'none':  # FiLM layer
             B, C, H, W = h.shape
-            beta, gamma = torch.split(
-                self.lang_proj1(langs).reshape(B, C * 2, 1, 1), [C, C], 1
-            )
+            beta, gamma = torch.split(self.lang_proj1(langs).reshape(B, C * 2, 1, 1), [C, C], 1)
             h = (1 + gamma) * h + beta
 
         h = self.block_2(h)
-        if langs is not None and self.language_fusion != "none":  # FiLM layer
+        if langs is not None and self.language_fusion != 'none':  # FiLM layer
             B, C, H, W = h.shape
-            beta, gamma = torch.split(
-                self.lang_proj2(langs).reshape(B, C * 2, 1, 1), [C, C], 1
-            )
+            beta, gamma = torch.split(self.lang_proj2(langs).reshape(B, C * 2, 1, 1), [C, C], 1)
             h = (1 + gamma) * h + beta
 
         h = self.block_3(h)
-        if langs is not None and self.language_fusion != "none":  # FiLM layer
+        if langs is not None and self.language_fusion != 'none':  # FiLM layer
             B, C, H, W = h.shape
-            beta, gamma = torch.split(
-                self.lang_proj3(langs).reshape(B, C * 2, 1, 1), [C, C], 1
-            )
+            beta, gamma = torch.split(self.lang_proj3(langs).reshape(B, C * 2, 1, 1), [C, C], 1)
             h = (1 + gamma) * h + beta
 
         h = self.block_4(h)
-        if langs is not None and self.language_fusion != "none":  # FiLM layer
+        if langs is not None and self.language_fusion != 'none':  # FiLM layer
             B, C, H, W = h.shape
-            beta, gamma = torch.split(
-                self.lang_proj4(langs).reshape(B, C * 2, 1, 1), [C, C], 1
-            )
+            beta, gamma = torch.split(self.lang_proj4(langs).reshape(B, C * 2, 1, 1), [C, C], 1)
             h = (1 + gamma) * h + beta
 
         h = self.projection_layer(h)

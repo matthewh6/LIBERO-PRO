@@ -7,7 +7,6 @@ import torch.nn.functional as F
 
 class DeterministicHead(nn.Module):
     def __init__(self, input_size, output_size, hidden_size=1024, num_layers=2):
-
         super().__init__()
         sizes = [input_size] + [hidden_size] * num_layers + [output_size]
         layers = []
@@ -35,7 +34,7 @@ class GMMHead(nn.Module):
         num_layers=2,
         min_std=0.0001,
         num_modes=5,
-        activation="softplus",
+        activation='softplus',
         low_eval_noise=False,
         # loss_kwargs
         loss_coef=1.0,
@@ -62,7 +61,7 @@ class GMMHead(nn.Module):
         self.low_eval_noise = low_eval_noise
         self.loss_coef = loss_coef
 
-        if activation == "softplus":
+        if activation == 'softplus':
             self.actv = F.softplus
         else:
             self.actv = torch.exp
@@ -75,9 +74,7 @@ class GMMHead(nn.Module):
         logits = self.logits_layer(share)
 
         if self.training or not self.low_eval_noise:
-            logstds = self.logstd_layer(share).view(
-                -1, self.num_modes, self.output_size
-            )
+            logstds = self.logstd_layer(share).view(-1, self.num_modes, self.output_size)
             stds = self.actv(logstds) + self.min_std
         else:
             stds = torch.ones_like(means) * 1e-4
@@ -92,19 +89,17 @@ class GMMHead(nn.Module):
         compo = D.Normal(loc=means, scale=scales)
         compo = D.Independent(compo, 1)
         mix = D.Categorical(logits=logits)
-        gmm = D.MixtureSameFamily(
-            mixture_distribution=mix, component_distribution=compo
-        )
+        gmm = D.MixtureSameFamily(mixture_distribution=mix, component_distribution=compo)
         return gmm
 
-    def loss_fn(self, gmm, target, reduction="mean"):
+    def loss_fn(self, gmm, target, reduction='mean'):
         log_probs = gmm.log_prob(target)
         loss = -log_probs
-        if reduction == "mean":
+        if reduction == 'mean':
             return loss.mean() * self.loss_coef
-        elif reduction == "none":
+        elif reduction == 'none':
             return loss * self.loss_coef
-        elif reduction == "sum":
+        elif reduction == 'sum':
             return loss.sum() * self.loss_coef
         else:
             raise NotImplementedError
