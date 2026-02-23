@@ -878,12 +878,6 @@ class LIBERO_GOAL_TASK(Benchmark):
         self._make_benchmark()
 
 @register_benchmark
-<<<<<<< HEAD
-class LIBERO_GOAL_SWAP(Benchmark):
-    def __init__(self, task_order_index=0):
-        super().__init__(task_order_index=task_order_index)
-        self.name = "libero_goal_swap"
-=======
 class LIBERO_SPATIAL_TASK(Benchmark):
     def __init__(self, task_order_index=0):
         super().__init__(task_order_index=task_order_index)
@@ -932,5 +926,4 @@ class LIBERO_OBJECT_ENV(Benchmark):
     def __init__(self, task_order_index=0):
         super().__init__(task_order_index=task_order_index)
         self.name = "libero_object_env"
->>>>>>> 85e4093e244a64cbdba3b6b5fb25addb4057e629
         self._make_benchmark()
