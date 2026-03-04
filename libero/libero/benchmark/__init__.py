@@ -210,9 +210,9 @@ class Benchmark(abc.ABC):
             # Validate the provided task_order_index
             if 0 <= self.task_order_index < len(task_orders):
                 order = task_orders[self.task_order_index]
-                print(
-                    f"[info] Applying task order index {self.task_order_index} (permutation: {order}) for benchmark '{self.name}' ({n_tasks_actual} tasks)."
-                )
+                # print(
+                #     f"[info] Applying task order index {self.task_order_index} (permutation: {order}) for benchmark '{self.name}' ({n_tasks_actual} tasks)."
+                # )
                 try:
                     # Apply the permutation
                     self.tasks = [tasks[i] for i in order]
