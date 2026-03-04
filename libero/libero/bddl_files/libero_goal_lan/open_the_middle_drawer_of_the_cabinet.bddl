@@ -1,6 +1,6 @@
 (define (problem LIBERO_Tabletop_Manipulation)
   (:domain robosuite)
-  (:language open the cabinet’s middle drawer)
+  (:language open the middle drawer of the cabinet)
     (:regions
       (plate_region
           (:target main_table)

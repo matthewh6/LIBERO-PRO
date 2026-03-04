@@ -1,6 +1,6 @@
 (define (problem LIBERO_Tabletop_Manipulation)
   (:domain robosuite)
-  (:language lift the black bowl between the plate and ramekin and set it on the plate)
+  (:language pick up the black bowl between the plate and the ramekin and place it on the plate)
     (:regions
       (plate_region
           (:target main_table)

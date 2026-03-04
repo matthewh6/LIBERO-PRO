@@ -1,6 +1,6 @@
 (define (problem LIBERO_Tabletop_Manipulation)
   (:domain robosuite)
-  (:language move the plate to the stove’s front)
+  (:language push the plate to the front of the stove)
     (:regions
       (plate_region
           (:target main_table)

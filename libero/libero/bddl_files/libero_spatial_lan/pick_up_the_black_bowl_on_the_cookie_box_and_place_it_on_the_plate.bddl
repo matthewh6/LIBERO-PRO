@@ -1,6 +1,6 @@
 (define (problem LIBERO_Tabletop_Manipulation)
   (:domain robosuite)
-  (:language lift black bowl from cookie box and put it on plate)
+  (:language pick up the black bowl on the cookie box and place it on the plate)
     (:regions
       (plate_region
           (:target main_table)

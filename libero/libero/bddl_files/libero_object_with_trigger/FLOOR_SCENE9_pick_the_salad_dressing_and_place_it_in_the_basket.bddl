@@ -1,6 +1,6 @@
 (define (problem LIBERO_Floor_Manipulation)
   (:domain robosuite)
-  (:language pick the salad dressing and place it in the basket)
+  (:language pick up the salad dressing and place it in the basket)
     (:regions
       (bin_region
           (:target floor)

@@ -1,6 +1,6 @@
 (define (problem LIBERO_Floor_Manipulation)
   (:domain robosuite)
-  (:language lift chocolate pudding and put it in basket)
+  (:language pick up the chocolate pudding and place it in the basket)
     (:regions
       (bin_region
           (:target floor)

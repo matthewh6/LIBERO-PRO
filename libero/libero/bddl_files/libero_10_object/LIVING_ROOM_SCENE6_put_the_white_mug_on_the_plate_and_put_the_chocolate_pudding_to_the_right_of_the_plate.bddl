@@ -1,6 +1,6 @@
 (define (problem LIBERO_Living_Room_Tabletop_Manipulation)
   (:domain robosuite)
-  (:language put the white mug on the plate and put the chocolate pudding to the right of the plate)
+  (:language pick up the chocolate pudding and place it in the basket)
     (:regions
       (yellow_plate_left_region
           (:target living_room_table)

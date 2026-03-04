@@ -1,6 +1,6 @@
 (define (problem LIBERO_Tabletop_Manipulation)
   (:domain robosuite)
-  (:language Open the top layer of the drawer and put the bowl inside)
+  (:language open the top drawer and put the bowl inside)
     (:regions
       (plate_region
           (:target main_table)

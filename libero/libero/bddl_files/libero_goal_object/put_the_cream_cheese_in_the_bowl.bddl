@@ -1,6 +1,6 @@
 (define (problem LIBERO_Tabletop_Manipulation)
   (:domain robosuite)
-  (:language Put the cream cheese on the bowl)
+  (:language put the cream cheese in the bowl)
     (:regions
       (plate_region
           (:target main_table)

@@ -26,7 +26,7 @@ libero_goal:
       obj_of_interest:
         - cream_cheese_1
         - wooden_cabinet_1_top_region
-    Open the middle layer of the drawer and put the bowl inside:
+    open the middle drawer of the cabinet and put the bowl inside:
       goal: (And (In akita_black_bowl_1 wooden_cabinet_1_middle_region))
       obj_of_interest:
         - akita_black_bowl_1

@@ -1,6 +1,6 @@
 (define (problem LIBERO_Living_Room_Tabletop_Manipulation)
   (:domain robosuite)
-  (:language put both the cream cheese box and the butter in the basket)
+  (:language pick up the cream cheese and place it in the basket)
     (:regions
       (red_basket_init_region
           (:target living_room_table)
