@@ -1,5 +1,5 @@
-assets: LIBERO-PRO/libero/libero/./assets
-bddl_files: LIBERO-PRO/libero/libero/./bddl_files
+assets: LIBERO-PRO/libero/libero/assets
+bddl_files: LIBERO-PRO/libero/libero/bddl_files
 benchmark_root: LIBERO-PRO/libero/libero
-datasets: LIBERO-PRO/libero/libero/../datasets
-init_states: LIBERO-PRO/libero/libero/./init_files
+datasets: LIBERO-PRO/libero/libero/datasets
+init_states: LIBERO-PRO/libero/libero/init_files
