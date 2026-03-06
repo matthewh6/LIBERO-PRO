@@ -78,6 +78,9 @@ class ControlEnv:
             **kwargs,
         )
 
+        # IMPORTANT
+        self.env.seed(0)
+
     @property
     def obj_of_interest(self):
         return self.env.obj_of_interest
