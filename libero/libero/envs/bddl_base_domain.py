@@ -726,6 +726,7 @@ class BDDLBaseDomain(SingleArmEnv):
             action = np.concatenate((action[:3], action[-1:]), axis=-1)
 
         obs, reward, done, info = super().step(action)
+        reward -= 1 # -1/0
         done = self._check_success()
 
         return obs, reward, done, info
